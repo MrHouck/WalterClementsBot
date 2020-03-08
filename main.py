@@ -138,4 +138,4 @@ for cog in os.listdir(".\\cogs"):
             print(f'{cog} cannot be loaded:')
             raise e
 
-client.run('NjcxMTcwMjk4NzgzMDcyMjU2.XmQaPQ.WRbvBAhRc5dxziE7_QlTZu7Zemg')
+client.run('[token]')
