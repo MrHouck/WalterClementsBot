@@ -2,16 +2,12 @@ import discord
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
-from googletrans import Translator
-from googletrans import LANGCODES
-from googletrans import LANGUAGES
-import random
-import sys
-import pyjokes
-import requests
-import os
-
-sys.path.append('/Users/Nathan/WalterClementsBotTest/')
+from urllib.request import urlopen, Request
+from googletrans import Translator, LANGUAGES, LANGCODES
+import time, json, random, sys, pyjokes, requests, os
+import re
+from datetime import datetime
+sys.path.append('/path/to/thing')
 import words
 
 trans = Translator()
@@ -31,7 +27,7 @@ class Fun(commands.Cog):
         await ctx.trigger_typing()
         arguments = message.split('|')
 
-        image = Image.open('/Users/Nathan/WalterClementsBotTest/cogs/blankfbitemplate.jpg')
+        image = Image.open('/path/to/WalterClementsBotTest/cogs/blankfbitemplate.jpg')
         font_type = ImageFont.truetype('/Windows/Fonts/Arial.ttf', 35)
         draw = ImageDraw.Draw(image)
         draw.text(xy=(50, 155),text=arguments[0],fill=(0,0,0),font=font_type)
@@ -341,6 +337,147 @@ class Fun(commands.Cog):
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
+    @commands.command()
+    @commands.guild_only()
+    async def space(self, ctx):
+        url = "http://api.open-notify.org/astros.json"
+        response = urlopen(url)
+        result = json.loads(response.read())
+        ppl = result["number"]
+        embed = discord.Embed(title=f"There are currently {ppl} people in space right now.")
+        people = result["people"]
+        for p in people:
+            name = p["name"]
+            craft = p["craft"]
+            embed.add_field(name=f"{name}", value=f"on board of {craft}", inline=False)
+        url = "http://api.open-notify.org/iss-now.json"
+        response = urlopen(url)
+        result = json.loads(response.read())
+        location = result["iss_position"]
+        lat = location["latitude"]
+        lon = location["longitude"]
+        now = datetime.now()
+        timestamp = now.strftime("%H:%M:%S")
+        embed.set_author(name="What they see (click)", url=f"https://www.google.com/maps/@?api=1&map_action=map&center={lat},{lon}&zoom=10&basemap=satellite&layer=transit")
+        embed.set_footer(text=f"(ISS @ {timestamp}) Latitude: {lat}    Longitude: {lon}")
+        embed.set_thumbnail(url="https://i0.wp.com/freepngimages.com/wp-content/uploads/2015/12/international-space-station-transparent-background.png?fit=817%2C325")
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def dog(self, ctx):
+        embed = discord.Embed()
+        embed.set_image(url="https://source.unsplash.com/collection/1250790/")
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        return await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def cat(self, ctx):
+        embed = discord.Embed()
+        embed.set_image(url="https://source.unsplash.com/collection/139386/")
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        return await ctx.send(embed=embed)
+
+    @commands.command(aliases=['birb'])
+    @commands.guild_only()
+    async def bird(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/img/birb'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        link = result["link"]
+        embed = discord.Embed()
+        embed.set_image(url=link)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        return await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def panda(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/img/panda'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        link = result["link"]
+        embed = discord.Embed()
+        embed.set_image(url=link)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        return await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def chatbot(self, ctx, *, message):
+        message = message.replace(' ', '_')
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = f'https://some-random-api.ml/chatbot?message={message}'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        reply = result["response"]
+        await ctx.send(reply)
+
+    @commands.command()
+    @commands.guild_only()
+    async def hug(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/animu/hug'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        link = result["link"]
+        embed = discord.Embed()
+        embed.set_image(url=link)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        return await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def dogfact(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/facts/dog'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        fact = result["fact"]
+        return await ctx.send(fact)
+
+    @commands.command()
+    @commands.guild_only()
+    async def catfact(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/facts/cat'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        fact = result["fact"]
+        return await ctx.send(fact)
+
+    @commands.command()
+    @commands.guild_only()
+    async def koalafact(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/facts/koala'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        fact = result["fact"]
+        return await ctx.send(fact)
+
+    @commands.command()
+    @commands.guild_only()
+    async def pandafact(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/facts/panda'
+        req = Request(url=reg_url, headers=headers)
+        response = urlopen(req)
+        result = json.loads(response.read())
+        fact = result["fact"]
+        return await ctx.send(fact)
+
 def setup(client):
     client.add_cog(Fun(client))
-    print('Loaded fun module.')
+    now = datetime.now()
+    print(f'{now} | Loaded fun module.')
