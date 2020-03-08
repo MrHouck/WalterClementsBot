@@ -2,6 +2,7 @@ import traceback
 import sys
 from discord.ext import commands
 import discord
+import datetime
 
 class CommandErrorHandler(commands.Cog):
     def __init__(self, client):
@@ -61,4 +62,5 @@ class CommandErrorHandler(commands.Cog):
 
 def setup(client):
     client.add_cog(CommandErrorHandler(client))
-    print('Loaded errorhandler module.')
+    now = datetime.datetime.now()
+    print(f'{now} | Loaded errorhandler module.')
