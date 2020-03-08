@@ -30,14 +30,11 @@ class Economy(commands.Cog):
             userBalance = result1[1]
             userBadges = result1[2]
             userBadges = userBadges.replace(',', ' ')
-            cursor.execute(f"SELECT wshares, yshares, rshares, sshares FROM economy WHERE guild_id = '{ctx.guild.id}' and user_id = '{member.id}'")
-            shares = cursor.fetchone()
             embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at) #using the members top role color
             embed.set_thumbnail(url=member.avatar_url) #getting the tagged members picture and setting it as the thumbnail
             embed.set_author(name=f'Economy Stats - {member}')
             embed.add_field(name='Balance:', value=f'{userBalance} 💠', inline=False) #adding the users balance
             embed.add_field(name='Badges:', value=f'{userBadges}', inline=False) #adding the badges
-            embed.add_field(name="Stocks:", value=f'Walter - {shares[0]}\nYoungpeopleyoutube - {shares[1]}\nReddit - {shares[2]}\nSmartphowned - {shares[3]}', inline=False)
             embed.set_footer(text=f'User ID: {member.id}')
             await ctx.send(embed=embed)
             cursor.close()
@@ -53,7 +50,7 @@ class Economy(commands.Cog):
         if result is None:
             today = datetime.today()
             currentDay = today.day
-            sql = ("INSERT INTO economy(guild_id, user_id, money, badges, nextDaily, wshares, yshares, rshares, sshares) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)")
+            sql = ("INSERT INTO economy(guild_id, user_id, money, badges, nextDaily) VALUES(?, ?, ?, ?, ?)")
             val = (ctx.guild.id, ctx.author.id, 100, "\u200b", currentDay, 0, 0, 0, 0)
             cursor.execute(sql, val)
             db.commit()
@@ -245,4 +242,5 @@ class Economy(commands.Cog):
 
 def setup(client):
     client.add_cog(Economy(client))
-    print('Loaded economy module.')
+    now = datetime.now()
+    print(f'{now} | Loaded economy module.')
