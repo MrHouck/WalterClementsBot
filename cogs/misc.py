@@ -5,6 +5,8 @@ import PIL
 from PIL import Image
 from googlesearch import search
 import urbandict
+import urllib.request, time, json
+from datetime import datetime
 import random
 from discord.ext import commands
 
@@ -77,13 +79,14 @@ class Misc(commands.Cog):
         """
         Get the most recent changelog.
         """
-        embed = discord.Embed(title="v1.7.4", color=0xff80ff)
-        embed.add_field(name="Commands: ", value="No new commands (i think)", inline=False)
-        embed.add_field(name="Fixes/Changes: ", value="- Fixed an issue where literally anyone could take the bot offline\n- You can now DM the bot and it responds :D\n- More database friendly stuff\n- Added logging for mutes and bans\n- Added some more error responses\n- Moved some commands from the main file for better optimization\n- Can no longer issue commands in DMs\n- Commands are no longer case-sensitive, doing +hELP will work.", inline=False)
-        embed.add_field(name="\u200b", value="That's it for this update.", inline=False)
-        embed.set_footer(text="v1.7.4")
+        embed = discord.Embed(title="v1.8.1 -- huge update btw", color=0xff80ff)
+        embed.add_field(name="Commands: ", value="There are a myriad of new commands, including: ``+space, +dog, +cat, +bird, +panda, +hug, +koalafact, +pandafact, +dogfact, +catfact, +chatbot, +invite, +source, and +lockdown``", inline=False)
+        embed.add_field(name="Fixes/Changes: ", value="- Removed DM autoresponder, screwed everything up.\n- 🎉 **THE BOT IS PUBLIC AGAIN** 🎉 (can't wait to see how fast this breaks)\n- Mods, you can now lockdown your servers to prevent raids.\n- The stock market system and leveling system have been removed 😔\n- Would definitely recommend using +space, epic command\n- Autorole works(?) now\n- Updated the help command because it was missing quite a few commands.\n- Don't worry, the DM autoresponder will be coming back. I think.", inline=False)
+        embed.add_field(name="That's all for now!", value="If you have any ideas or suggestions, lemme know by using the +suggestion command or just dming me!", inline=False)
+        embed.set_footer(text="v1.8.1")
         await ctx.send(embed=embed)
-    @commands.command(aliases=['hex', 'color'])
+        
+    @commands.command(aliases=['hex'])
     @commands.guild_only()
     async def visualizeHex(self, ctx, hexCode):
         await ctx.trigger_typing()
@@ -129,7 +132,7 @@ class Misc(commands.Cog):
             s = e.options[0]
             page = wikipedia.page(s, auto_suggest=False)
             summary = wikipedia.summary(s, sentences=6)
-        summary = summary + '...'
+        summary = summary + '...' 
         url = page.url
         title = page.title
         if page.images != None:
@@ -175,7 +178,7 @@ class Misc(commands.Cog):
         embed.add_field(name="Client Latency:", value=f"{round(self.bot.latency * 1000)}ms", inline=False)
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
-
+    
     @commands.command()
     @commands.is_owner()
     @commands.guild_only()
@@ -186,6 +189,20 @@ class Misc(commands.Cog):
             await self.bot.logout()
         else:
             await ctx.send('404 Gateway Not Found')
+    
+    @commands.command()
+    async def invite(self, ctx):
+        embed=discord.Embed(title='Invite me!', url="https://mrhouck.github.io/walterbot/")
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    async def source(self, ctx):
+        embed=discord.Embed(title='Source Code', url="https://github.com/MrHouck/WalterClementsBot")
+        embed.set_footer(text="i know my code is terrible")
+        await ctx.send(embed=embed)
+    
+
 def setup(client):
     client.add_cog(Misc(client))
-    print('Loaded misc module.')
+    now = datetime.now()
+    print(f'{now} | Loaded misc module.')
