@@ -16,7 +16,7 @@ class Logs(commands.Cog):
     async def logs(self, ctx):
         if ctx.invoked_subcommand == None:
             await ctx.send('You need to specify a subcommand! (setchannel, enable, disable)')
-
+    
     @logs.command(aliases=['sc', 'set', 'channel'])
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
@@ -25,7 +25,7 @@ class Logs(commands.Cog):
             return await ctx.send('You need to specify a channel!')
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
-        cursor.execute(f"SELECT channel_id, enabled FROM logs WHERE guild_id = '{ctx.guild.id}'")
+        cursor.execute(f"SELECT channel_id, enabled FROM logs WHERE guild_id = '{ctx.guild.id}'") 
         result = cursor.fetchone()
         if result is None:
             sql = ("INSERT INTO logs(guild_id, channel_id, enabled) VALUES(?,?,?)")
@@ -83,7 +83,7 @@ class Logs(commands.Cog):
     #       LISTENERS        #
     #                        #
     #------------------------#
-
+    
     @commands.Cog.listener()
     async def on_raw_message_delete(self, payload):
         if payload.cached_message.author.bot == True:
@@ -119,7 +119,7 @@ class Logs(commands.Cog):
         await channel.send(f"`[({current_time})]` - **Message Edited**\n```User: {before.author} (ID: {before.author.id})\nBefore: {before.content}\nAfter: {after.content}``` ``Channel:`` {before.channel.mention}")
 
     @commands.Cog.listener()
-    async def on_member_leave(member):
+    async def on_member_leave(self, member):
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         db = sqlite3.connect('main.sqlite')
@@ -133,7 +133,7 @@ class Logs(commands.Cog):
         await channel.send(f"`[({current_time})]` - **User Left Guild**\n`User: {member} (ID: {member.id})`")
 
     @commands.Cog.listener()
-    async def on_guild_role_create(role):
+    async def on_guild_role_create(self, role):
         guild_id = role.guild.id
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
@@ -146,9 +146,10 @@ class Logs(commands.Cog):
         channelid = result[0]
         channel = self.bot.get_channel(int(channelid))
         await channel.send(f"`[({current_time})]` - **Role Created**\n```Name: {role.name} (ID: {role.id})`\nHoist?: {role.hoist}\nPosition: {role.position}\nMentionable: {role.mentionable}\nColor: {role.color}```")
-
+    
 
 
 def setup(client):
     client.add_cog(Logs(client))
-    print('Loaded logs module')
+    now = datetime.now()
+    print(f'{now} | Loaded logs module.')
