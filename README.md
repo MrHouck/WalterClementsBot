@@ -2,10 +2,10 @@
 A discord bot made with the discordpy API -- please do not criticize my code I know it's terrible
 
 
-##v1.8.1
+## v1.8.1
 
 
-######Commands: There are a myriad of new commands, including:
+###### Commands: There are a myriad of new commands, including:
   +space, 
   +dog,
   +cat,
@@ -21,7 +21,7 @@ A discord bot made with the discordpy API -- please do not criticize my code I k
   +source,
   +lockdown
 
-######Fixes/Changes:
+###### Fixes/Changes:
 - Removed DM autoresponder, screwed everything up.
 - :tada: THE BOT IS PUBLIC AGAIN :tada: (can't wait to see how fast this breaks)
 - Mods, you can now lockdown your servers to prevent raids.
