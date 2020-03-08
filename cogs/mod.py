@@ -1,10 +1,11 @@
 import discord
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 from discord.ext import commands
 from discord.utils import get
 from collections.abc import Sequence
 import sqlite3
+blacklistedUsers = []
 
 class Mod(commands.Cog):
     def __init__(self, client):
@@ -183,7 +184,7 @@ class Mod(commands.Cog):
                 current_time = now.strftime("%H:%M:%S")
                 logMessage = f"``[({current_time})]`` - **User Muted**"
                 logMessage += f"```User: {member} (ID: {member.id})"
-
+                
                 embed.set_author(name=f"Muted: {member}", icon_url=member.avatar_url)
                 embed.add_field(name="Reason:", value=f"{reason}", inline=True)
                 if s == True:
@@ -232,7 +233,7 @@ class Mod(commands.Cog):
                     await member.remove_roles(role, reason='Mute')
                 else:
                     return await ctx.send('There was an error setting the time for the mute.')
-
+                
                 now = datetime.now()
                 current_time = now.strftime("%H:%M:%S")
                 logMessage = f"``[({current_time})]`` - **User Unmuted**"
@@ -389,7 +390,7 @@ class Mod(commands.Cog):
             db.commit()
             cursor.close()
             db.close()
-
+    
     @autorole.command()
     @commands.guild_only()
     @commands.has_permissions(manage_server=True)
@@ -409,6 +410,77 @@ class Mod(commands.Cog):
             cursor.close()
             db.close()
 
+    @commands.command()
+    @commands.has_permissions(administrator=True)
+    async def lockdown(self, ctx, off):
+        db = sqlite3.connect('main.sqlite')
+        cursor = db.cursor()
+        cursor.execute(f"SELECT raidMode FROM lockdown WHERE guild_id = '{ctx.guild.id}'")
+        result = cursor.fetchone()
+        if result is None:
+            sql = ("INSERT INTO lockdown(guild_id, raidMode) VALUES(?,?)")
+            val = (ctx.guild.id, "true")
+            cursor.execute(sql, val)
+            db.commit()
+            cursor.execute(f"SELECT raidMode FROM lockdown WHERE guild_id = '{ctx.guild.id}'")
+            result = cursor.fetchone()
+            raidmode = result[0]
+        else:
+            raidmode = result[0]
+        if off != 'off' and off != 'on':
+            return await ctx.send('Specify if you are turning it ``off`` or ``on``')
+        elif off == 'off':
+            if raidmode == "true":
+                raidmode = "false"
+                cursor.execute(f"UPDATE lockdown SET raidMode = '{raidmode}' WHERE guild_id = {ctx.guild.id}")
+                db.commit()
+                await ctx.send("🚨❗ **__RAIDMODE__** ***__DISABLED__*** ❗🚨")
+                cursor.execute(f"SELECT blacklistedUsers FROM lockdown WHERE guild_id = {ctx.guild.id}")
+                result = cursor.fetchone()
+                blacklistedUsers = result[0]
+                users = blacklistedUsers.split(', ')
+                for user in users:
+                    user = user[:-5]
+                    member = discord.utils.get(ctx.guild.members, name=user)
+                    role = get(ctx.guild.roles, name="Muted")
+                    await member.remove_roles(role)
+                cursor.execute(f"UPDATE lockdown SET blacklistedUsers = NULL WHERE guild_id = {ctx.guild.id}")
+                cursor.close()
+                db.close()
+            else:
+                return await ctx.send("Raidmode is already disabled")
+        else:
+            if raidmode == "false":
+                raidmode = "true"
+                cursor.execute(f"UPDATE lockdown SET raidMode = '{raidmode}' WHERE guild_id = {ctx.guild.id}")
+                db.commit()
+                await ctx.send("🚨❗ **__RAIDMODE ENABLED__** ❗🚨")
+                for user in ctx.guild.members:
+                    time=datetime.now()
+                    diff = time - timedelta(hours=1)
+                    time_joined = user.joined_at
+                    if diff < time_joined:
+                        cursor.execute(f"SELECT blacklistedUsers FROM lockdown WHERE guild_id = '{ctx.guild.id}'")
+                        result = cursor.fetchone()
+                        if result[0] is None:
+                            newBlacklisted = user
+                        else:
+                            if str(user) in result[0]:
+                                newBlacklisted = result[0]
+                            else:
+                                newBlacklisted = result[0] + ", " + str(user)
+                        role = get(ctx.guild.roles, name="Muted")
+                        if role is None: 
+                            return await ctx.send("Setup a muted role first.")
+                        await user.add_roles(role)
+                        cursor.execute(f"UPDATE lockdown SET blacklistedUsers = '{newBlacklisted}'")
+                        db.commit()
+                        cursor.close()
+                        db.close()
+            else:
+                return await ctx.send("Raidmode is already enabled")
+       
+
     @commands.Cog.listener()
     async def on_member_join(self, member):
         db = sqlite3.connect('main.sqlite')
@@ -416,15 +488,37 @@ class Mod(commands.Cog):
         guild_id = member.guild.id
         cursor.execute(f"SELECT enabled, role FROM autorole WHERE guild_id = '{guild_id}'")
         result = cursor.fetchone()
+        cursor.execute(f"SELECT raidMode FROM lockdown WHERE guild_id = '{guild_id}'")
+        enabled=cursor.fetchone()
         if result == None:
             return
         if result[0] == "false":
             return
         else:
-            role = get(member.guild.roles, name=result[1])
-            if role == None:
-                return
-            await member.add_roles(role)
+            if enabled[0] == "false" or enabled == None:
+                role = get(member.guild.roles, name=result[1])
+                if role == None:
+                    return
+                await member.add_roles(role)
+            else:
+                role = get(member.guild.roles, name="Muted")
+                if role == None:
+                    return
+                await member.add_roles(role)
+                cursor.execute(f"SELECT blacklistedUsers FROM lockdown WHERE guild_id = '{member.guild.id}'")
+                result = cursor.fetchone()
+                if result[0] is None:
+                    newBlacklisted = user
+                else:
+                    if str(user) in result[0]: #literally impossible but you never know where your shit code could go wrong
+                        newBlacklisted = result[0]
+                    else:
+                        newBlacklisted = result[0] + ", " + str(user)
+                        cursor.execute(f"UPDATE lockdown SET blacklistedUsers = '{newBlacklisted}'")
+                        db.commit()
+                        cursor.close()
+                        db.close()
 def setup(client):
     client.add_cog(Mod(client))
-    print('Loaded moderation module.')
+    now = datetime.now()
+    print(f'{now} | Loaded moderation module.')
