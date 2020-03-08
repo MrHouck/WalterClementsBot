@@ -87,42 +87,43 @@ async def on_ready():
 #       DM Autorresponder       #
 #                               #
 
-@client.event
-async def on_message(message):
-    if message.guild is None:
-        responses = ['Hey there.', 'bruh',
-                    'walter', 'i will eat you',
-                    'Leave me alone', 'Nothing to see here...',
-                    'Go away', 'Haha yeah',
-                    'oof', 'Should I know you?',
-                    'affirmative', 'where am i',
-                    'hope you\'re having a nice day', 'never dm me again',
-                    'how are you', 'NO',
-                    'i literally could not care less', 'don\'t remember asking',
-                    'i would have to go with yes', 'am confused',
-                    'why are you talking to a robot', 'i don\'t care',
-                    'sure', 'dms are closed go home',
-                    'bup', 'what do you think',
-                    'trust no one', 'of course',
-                    'don\'t you have something better to do?', '?',
-                    'no u', 'no can do',
-                    'psssst... i\'m not a real person', 'go clean your room',
-                    'wee snaw', '*cries*',
-                    'owo', 'I\'m sorry, but you do not have permission to perform this command. Please contact the server administrators if you think this is an error.',
-                    'how are you not in school?', 'fantastic',
-                    'who put you on the planet', 'get a life',
-                    'do you are have stupid', 'despacito',
-                    'if you say so', 'don\'t think so',
-                    'hope you\'re having a nice day', 'QUIET DOWN I\'M PLAYING FORTNITE',
-                    'take care!', 'you can go now',
-                    'pizza time', 'quit horsing around!',
-                    'huh?', 'shut up',
-                    'amazing', 'yo',
-                    'aaaaaaa', 'ok',
-                    'loser']
-        await message.author.send(random.choice(responses))
-    else:
-        await client.process_commands(message)
+#@client.event
+#async def on_message(message):
+#    if message.guild is None:
+#        responses = ['Hey there.', 'bruh',
+#                    'walter', 'i will eat you',
+#                    'Leave me alone', 'Nothing to see here...',
+#                    'Go away', 'Haha yeah',
+#                    'oof', 'Should I know you?',
+#                    'affirmative', 'where am i',
+#                    'hope you\'re having a nice day', 'never dm me again',
+#                    'how are you', 'NO',
+#                    'i literally could not care less', 'don\'t remember asking',
+#                    'i would have to go with yes', 'am confused',
+#                    'why are you talking to a robot', 'i don\'t care',
+#                    'sure', 'dms are closed go home',
+#                    'bup', 'what do you think',
+#                    'trust no one', 'of course',
+#                    'don\'t you have something better to do?', '?',
+#                    'no u', 'no can do',
+#                    'psssst... i\'m not a real person', 'go clean your room',
+#                    'wee snaw', '*cries*',
+#                    'owo', 'I\'m sorry, but you do not have permission to perform this command. Please contact the server administrators if you think this is an error.',
+#                    'how are you not in school?', 'fantastic',
+#                    'who put you on the planet', 'get a life',
+#                    'do you are have stupid', 'despacito',
+#                    'if you say so', 'don\'t think so',
+#                    'hope you\'re having a nice day', 'QUIET DOWN I\'M PLAYING FORTNITE',
+#                    'take care!', 'you can go now',
+#                    'pizza time', 'quit horsing around!',
+#                    'huh?', 'shut up',
+#                    'amazing', 'yo',
+#                    'aaaaaaa', 'ok',
+#                    'loser']
+#        await message.author.send(random.choice(responses))
+#    else:
+#        await client.process_commands(message)
+
 
 
 @tasks.loop(seconds=45)
@@ -138,4 +139,4 @@ for cog in os.listdir(".\\cogs"):
             print(f'{cog} cannot be loaded:')
             raise e
 
-client.run('[token]')
+client.run('token')
