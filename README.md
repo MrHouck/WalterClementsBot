@@ -4,31 +4,15 @@ A discord bot made with the discordpy API -- please do not criticize my code I k
 Some user data is stored but you've gotta be batshit crazy if you think I can read that
 
 
-## v1.8.1
+## v1.8.3 - "The Logs Update"
 
 
-###### Commands: There are a myriad of new commands, including:
-  +space, 
-  +dog,
-  +cat,
-  +bird,
-  +panda,
-  +hug,
-  +koalafact,
-  +pandafact,
-  +dogfact,
-  +catfact,
-  +chatbot,
-  +invite,
-  +source,
-  +lockdown
-
+###### Commands:
+  
+  Changed the way +logs enable and disable work, added +logs settings
+  
 ###### Fixes/Changes:
-- Removed DM autoresponder, screwed everything up.
-- :tada: THE BOT IS PUBLIC AGAIN :tada: (can't wait to see how fast this breaks)
-- Mods, you can now lockdown your servers to prevent raids.
-- The stock market system and leveling system have been removed :pensive:
-- Would definitely recommend using +space, epic command
-- Autorole works(?) now
-- Updated the help command because it was missing quite a few commands.
-- Don't worry, the DM autoresponder will be coming back. I think
+- You can now customize what you want to be logged! Check out +logs settings to see what's enabled for your server!
+- To disable/enable settings, use +logs enable/disable (setting)
+- Fixed an issue with mute logging, the user would not be muted if logging wasn't enabled.
+- Probably some other stuff I don't remember (imagine writing down what you changed lole)
