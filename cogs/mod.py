@@ -40,11 +40,11 @@ class Mod(commands.Cog):
         ##for logs
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
-        cursor.execute(f"SELECT channel_id, enabled FROM logs WHERE guild_id = '{ctx.guild.id}'")
+        cursor.execute(f"SELECT channel_id, memberBanned FROM logs WHERE guild_id = '{ctx.guild.id}'")
         result = cursor.fetchone()
         if result == None:
             return
-        if result[1] == "false":
+        if result[1] == 0:
             return
         else:
             time = datetime.now()
@@ -127,11 +127,11 @@ class Mod(commands.Cog):
         ##for logs
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
-        cursor.execute(f"SELECT channel_id, enabled FROM logs WHERE guild_id = '{ctx.guild.id}'")
+        cursor.execute(f"SELECT channel_id, memberBanned FROM logs WHERE guild_id = '{ctx.guild.id}'")
         result = cursor.fetchone()
         if result == None:
             return
-        if result[1] == "false":
+        if result[1] == 0:
             return
         else:
             time = datetime.now()
@@ -207,12 +207,12 @@ class Mod(commands.Cog):
 
                 db = sqlite3.connect('main.sqlite')
                 cursor = db.cursor()
-                cursor.execute(f"SELECT channel_id, enabled FROM logs WHERE guild_id = '{guild.id}'")
+                cursor.execute(f"SELECT channel_id, memberMuted FROM logs WHERE guild_id = '{guild.id}'")
                 result = cursor.fetchone()
                 if result == None:
-                    return
-                elif result[1] == "false":
-                    return
+                    pass
+                elif result[1] == 0:
+                    pass
                 else:
                     channelid = result[0]
                     channel = self.bot.get_channel(int(channelid))
@@ -234,6 +234,10 @@ class Mod(commands.Cog):
                 else:
                     return await ctx.send('There was an error setting the time for the mute.')
                 
+                if result == None:
+                    return
+                elif result[1] == 0:
+                    return
                 now = datetime.now()
                 current_time = now.strftime("%H:%M:%S")
                 logMessage = f"``[({current_time})]`` - **User Unmuted**"
@@ -264,11 +268,11 @@ class Mod(commands.Cog):
         guild = ctx.guild
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
-        cursor.execute(f"SELECT channel_id, enabled FROM logs WHERE guild_id = '{guild.id}'")
+        cursor.execute(f"SELECT channel_id, memberMuted FROM logs WHERE guild_id = '{guild.id}'")
         result = cursor.fetchone()
         if result == None:
             return
-        elif result[1] == "false":
+        elif result[1] == 0:
             return
         else:
             channel = self.bot.get_channel(int(result[0]))
