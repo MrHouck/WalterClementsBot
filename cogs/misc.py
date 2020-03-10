@@ -63,10 +63,10 @@ class Misc(commands.Cog):
     @commands.guild_only()
     async def suggestion(self, ctx, *, suggestion):
         await ctx.trigger_typing()
-        """
-        Send a suggestion.
-        """
         user = self.bot.get_user(250067504641081355)
+        sentId = ctx.author.id
+        mention = f'<@{sentId}>'
+        await user.send(f'{mention} | {suggestion}')
         await user.send(suggestion)
         embed=discord.Embed()
         embed.add_field(name="Thank you!", value="Your suggestion was sent successfully.", inline=True)
@@ -76,14 +76,11 @@ class Misc(commands.Cog):
     @commands.guild_only()
     async def changelog(self, ctx):
         await ctx.trigger_typing()
-        """
-        Get the most recent changelog.
-        """
-        embed = discord.Embed(title="v1.8.1 -- huge update btw", color=0xff80ff)
-        embed.add_field(name="Commands: ", value="There are a myriad of new commands, including: ``+space, +dog, +cat, +bird, +panda, +hug, +koalafact, +pandafact, +dogfact, +catfact, +chatbot, +invite, +source, and +lockdown``", inline=False)
-        embed.add_field(name="Fixes/Changes: ", value="- Removed DM autoresponder, screwed everything up.\n- 🎉 **THE BOT IS PUBLIC AGAIN** 🎉 (can't wait to see how fast this breaks)\n- Mods, you can now lockdown your servers to prevent raids.\n- The stock market system and leveling system have been removed 😔\n- Would definitely recommend using +space, epic command\n- Autorole works(?) now\n- Updated the help command because it was missing quite a few commands.\n- Don't worry, the DM autoresponder will be coming back. I think.", inline=False)
+        embed = discord.Embed(title="v1.8.4", color=0xff80ff)
+        embed.add_field(name="Commands: ", value="Added +uptime and +botstats", inline=False)
+        embed.add_field(name="Fixes/Changes: ", value="- i think i fixed some bugs??\n- otherwise, just added some bot stats, was bored and out of ideas so yeah-- PLEASE GIVE SUGGESTIONS", inline=False)
         embed.add_field(name="That's all for now!", value="If you have any ideas or suggestions, lemme know by using the +suggestion command or just dming me!", inline=False)
-        embed.set_footer(text="v1.8.1")
+        embed.set_footer(text="v1.8.4")
         await ctx.send(embed=embed)
         
     @commands.command(aliases=['hex'])
