@@ -51,7 +51,7 @@ class Economy(commands.Cog):
             today = datetime.today()
             currentDay = today.day
             sql = ("INSERT INTO economy(guild_id, user_id, money, badges, nextDaily) VALUES(?, ?, ?, ?, ?)")
-            val = (ctx.guild.id, ctx.author.id, 100, "\u200b", currentDay, 0, 0, 0, 0)
+            val = (ctx.guild.id, ctx.author.id, 100, "\u200b", currentDay)
             cursor.execute(sql, val)
             db.commit()
             cursor.close()
@@ -145,7 +145,7 @@ class Economy(commands.Cog):
                 cursor.execute(sql, val)
                 db.commit()
                 sql = (f"UPDATE economy SET money = ? WHERE guild_id = ? and user_id = ?")
-                val = (str(int(money) + 500), str(ctx.guild.id), str(ctx.author.id))
+                val = (str(float(money) + 500), str(ctx.guild.id), str(ctx.author.id))
                 cursor.execute(sql, val)
                 db.commit()
                 cursor.close()
