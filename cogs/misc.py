@@ -222,10 +222,6 @@ class Misc(commands.Cog):
         embed.set_footer(text="i know my code is terrible")
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def bruh(self, ctx, guild_id : int):
-        creation = discord.utils.snowflake_time(guild_id)
-        print(creation)
 def setup(client):
     client.add_cog(Misc(client))
     now = datetime.now()
