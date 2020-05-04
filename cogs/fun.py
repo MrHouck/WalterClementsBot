@@ -4,12 +4,15 @@ from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 from urllib.request import urlopen, Request
 from googletrans import Translator, LANGUAGES, LANGCODES
+import jackbox
 import time, json, random, sys, pyjokes, requests, os
 import re
 from datetime import datetime
-sys.path.append('/path/to/thing')
+sys.path.append('/Users/MrHouck/Coding/WalterClementsBotTest/')
 import words
 
+
+jbclient = jackbox.Client()
 trans = Translator()
 class Fun(commands.Cog):
     def __init__(self, client):
@@ -27,7 +30,7 @@ class Fun(commands.Cog):
         await ctx.trigger_typing()
         arguments = message.split('|')
 
-        image = Image.open('/path/to/WalterClementsBotTest/cogs/blankfbitemplate.jpg')
+        image = Image.open('/Users/MrHouck/Coding/WalterClementsBotTest/cogs/blankfbitemplate.jpg')
         font_type = ImageFont.truetype('/Windows/Fonts/Arial.ttf', 35)
         draw = ImageDraw.Draw(image)
         draw.text(xy=(50, 155),text=arguments[0],fill=(0,0,0),font=font_type)
@@ -57,7 +60,9 @@ class Fun(commands.Cog):
         else:
             msg = info[0]
             block = info[1]
-            name = info[2]
+            
+            #TODO: make this better
+            
             if block == 'stone':
                 bNum = 20
             elif 'grass' in block:
@@ -217,8 +222,8 @@ class Fun(commands.Cog):
         member = ctx.author if not member else member
         uid = member.id
         if uid == 250067504641081355:
-            embed = discord.Embed(title="Oh shit, oh fuck!", color=member.color)
-            embed.add_field(name='Your cock size is too big to even begin to fathom!', value='\u200b')
+            embed = discord.Embed(title="Oh shit, oh fuck! Your cock is huge! Your cock size:", color=member.color)
+            embed.add_field(name='```8==================================================================================================================================D```', value='\u200b')
             return await ctx.send(embed=embed)
         random.seed(uid)
         randomNum = randint(1, 20)
@@ -384,7 +389,7 @@ class Fun(commands.Cog):
     async def bird(self, ctx):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/img/birb'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         link = result["link"]
@@ -398,7 +403,7 @@ class Fun(commands.Cog):
     async def panda(self, ctx):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/img/panda'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         link = result["link"]
@@ -413,7 +418,7 @@ class Fun(commands.Cog):
         message = message.replace(' ', '_')
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = f'https://some-random-api.ml/chatbot?message={message}'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         reply = result["response"]
@@ -424,7 +429,7 @@ class Fun(commands.Cog):
     async def hug(self, ctx):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/animu/hug'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         link = result["link"]
@@ -438,18 +443,18 @@ class Fun(commands.Cog):
     async def dogfact(self, ctx):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/dog'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         fact = result["fact"]
         return await ctx.send(fact)
-
+    
     @commands.command()
     @commands.guild_only()
     async def catfact(self, ctx):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/cat'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         fact = result["fact"]
@@ -460,7 +465,18 @@ class Fun(commands.Cog):
     async def koalafact(self, ctx):
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/koala'
-        req = Request(url=reg_url, headers=headers)
+        req = Request(url=reg_url, headers=headers) 
+        response = urlopen(req)
+        result = json.loads(response.read())
+        fact = result["fact"]
+        return await ctx.send(fact)
+    
+    @commands.command()
+    @commands.guild_only()
+    async def pandafact(self, ctx):
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
+        reg_url = 'https://some-random-api.ml/facts/panda'
+        req = Request(url=reg_url, headers=headers) 
         response = urlopen(req)
         result = json.loads(response.read())
         fact = result["fact"]
@@ -468,15 +484,47 @@ class Fun(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def pandafact(self, ctx):
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
-        reg_url = 'https://some-random-api.ml/facts/panda'
-        req = Request(url=reg_url, headers=headers)
-        response = urlopen(req)
-        result = json.loads(response.read())
-        fact = result["fact"]
-        return await ctx.send(fact)
-
+    async def jackbox(self, ctx, channel : discord.TextChannel, code):
+        try:
+            connection = await jbclient.connect(code=code, name='Verifying...')
+        except:
+            return await ctx.send("Invalid code.")
+        
+        await jbclient.close()
+        embed = discord.Embed(title=f'Type: {connection["apptag"].capitalize()}')
+        embed.set_author(name='A Jackbox game is starting!')    
+        embed.add_field(name=f'Current Players', value=f'{connection["numPlayers"]}', inline=False)
+        embed.add_field(name=f'Audience Enabled', value=f'{connection["audienceEnabled"]}', inline=False)
+        embed.add_field(name=f'Players in Audience', value=f'{connection["numAudience"]}', inline=False)
+    
+        message = await channel.send(embed=embed)
+        while True:
+            time.sleep(2)
+            url='http://blobcast.jackboxgames.com/room/{0}'.format(code)
+            req = Request(url=url)
+            response = urlopen(req)
+            data = json.loads(response.read())
+            if data.get("error", "") is None:
+                embed = discord.Embed(title='The game has ended!')
+                try:
+                    await jbclient.close()
+                except:
+                    pass
+                return await message.edit(embed=embed)
+            else:
+                if data.get('roomFull', '') is None:
+                    pass
+                else:
+                    embed = discord.Embed(title=f'Type: {data["apptag"].capitalize()}')
+                    embed.set_author(name='A Jackbox game has started!')    
+                    embed.add_field(name=f'Current Players', value=f'{data["numPlayers"]}', inline=False)
+                    embed.add_field(name=f'Audience Enabled', value=f'{data["audienceEnabled"]}', inline=False)
+                    embed.add_field(name=f'Players in Audience', value=f'{data["numAudience"]}', inline=False)
+                    await message.edit(embed=embed)
+                    try:
+                        await jbclient.close()
+                    except:
+                        pass
 def setup(client):
     client.add_cog(Fun(client))
     now = datetime.now()

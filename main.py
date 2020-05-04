@@ -1,6 +1,4 @@
-import discord
-import random
-import os
+import discord, random, os, sys, subprocess
 from discord.ext import commands, tasks
 from discord.utils import *
 from itertools import cycle
@@ -21,9 +19,6 @@ logger.addHandler(handler)
 async def reload(ctx, cog):
     """Reload a cog. (Bot owner only)"""
     await ctx.trigger_typing()
-    if cog=='economy':
-        await ctx.send("Dude remember you can't reload that cog or it breaks economy!")
-        return
     try:
         client.unload_extension(f'cogs.{cog}')
         client.load_extension(f'cogs.{cog}')
@@ -91,11 +86,11 @@ async def on_ready():
 #async def on_message(message):
 #    if message.guild is None:
 #        responses = ['Hey there.', 'bruh',
-#                    'walter', 'i will eat you',
-#                    'Leave me alone', 'Nothing to see here...',
-#                    'Go away', 'Haha yeah',
-#                    'oof', 'Should I know you?',
-#                    'affirmative', 'where am i',
+#                    'walter', 'i will eat you', 
+#                    'Leave me alone', 'Nothing to see here...', 
+#                    'Go away', 'Haha yeah', 
+#                    'oof', 'Should I know you?', 
+#                    'affirmative', 'where am i', 
 #                    'hope you\'re having a nice day', 'never dm me again',
 #                    'how are you', 'NO',
 #                    'i literally could not care less', 'don\'t remember asking',
@@ -139,4 +134,4 @@ for cog in os.listdir(".\\cogs"):
             print(f'{cog} cannot be loaded:')
             raise e
 
-client.run('token')
+client.run(os.environ.get('WalterBotToken'))

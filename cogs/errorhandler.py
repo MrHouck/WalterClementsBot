@@ -10,7 +10,7 @@ class CommandErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-
+        
         #prevents hard coded error events from being handled
         if hasattr(ctx.command, 'on_error'):
             return

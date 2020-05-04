@@ -378,7 +378,7 @@ class Logs(commands.Cog):
         await channel.send(f"`[({current_time})]` - **Role Deleted**\n```Name: {role.name} (ID: {role.id})```")
 
     @commands.Cog.listener()
-    async def on_raw_bulk_message_delete(payload):
+    async def on_raw_bulk_message_delete(self, payload):
         guild_id = payload.guild_id
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
@@ -394,7 +394,7 @@ class Logs(commands.Cog):
         await channel.send(f"`[({current_time})]` - **Bulk Message Deletion**\n```Channel: {channel2.name} (ID: {payload.channel_id})```")
 
     @commands.Cog.listener()
-    async def on_guild_channel_create(channel):
+    async def on_guild_channel_create(self, channel):
         guild_id = channel.guild.id
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
@@ -413,7 +413,7 @@ class Logs(commands.Cog):
         await channel1.send(f"`[({current_time})]` - **Channel Created [{channel.mention}]**\n```Channel: {channel.name} (ID: {channel.id})\nType: {t}\nPosition: {channel.position}\nCategory: {channel.category}```")
     
     @commands.Cog.listener()
-    async def on_guild_channel_delete(channel):
+    async def on_guild_channel_delete(self, channel):
         guild_id = channel.guild.id
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
@@ -430,7 +430,7 @@ class Logs(commands.Cog):
         else:
             t = "Text"
         await channel1.send(f"`[({current_time})]` - **Channel Deleted**\n```Channel: {channel.name} (ID: {channel.id})\nType: {t}\nPosition: {channel.position}\nCategory: {channel.category}```")
-    
+        
 
 def setup(client):
     client.add_cog(Logs(client))
