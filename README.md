@@ -10,79 +10,79 @@ This bot was originally started back in January as a fun little project but has 
 Here's what the command haul looks like:
 
 ## Moderation commands
- +kick
- +ban
- +clear
- +role
- +softban
- +unban
- +mute
- +unmute
- +createrole
- +deleterole
- +autorole setrole
- +autorole disable
- +autorole enable
- +lockdown
+ +kick<br>
+ +ban<br>
+ +clear<br>
+ +role<br>
+ +softban<br>
+ +unban<br>
+ +mute<br>
+ +unmute<br>
+ +createrole<br>
+ +deleterole<br>
+ +autorole setrole<br>
+ +autorole disable<br>
+ +autorole enable<br>
+ +lockdown<br>
 
 ## Logging commands
- +logs disable [module]
- +logs enable [module]
- +logs setchannel [discord channel]
- +logs settings
+ +logs disable [module]<br>
+ +logs enable [module]<br>
+ +logs setchannel [discord channel]<br>
+ +logs settings<br>
  
 ## Fun commands
- +walter
- +fbi
- +achievement 
- +say
- +uwu
- +roastme
- +norris
- +penis
- +retard
- +sentence
- +8ball
- +randomname
- +translate
- +space
- +dog
- +cat
- +bird
- +panda
- +chatbot
- +hug
- +dogfact
- +catfact
- +koalafact
- +pandafact
- +jackbox
- +help
+ +walter<br>
+ +fbi<br>
+ +achievement<br> 
+ +say<br>
+ +uwu<br>
+ +roastme<br>
+ +norris<br>
+ +penis<br>
+ +retard<br>
+ +sentence<br>
+ +8ball<br>
+ +randomname<br>
+ +translate<br>
+ +space<br>
+ +dog<br>
+ +cat<br>
+ +bird<br>
+ +panda<br>
+ +chatbot<br>
+ +hug<br>
+ +dogfact<br>
+ +catfact<br>
+ +koalafact<br>
+ +pandafact<br>
+ +jackbox<br>
+ +help<br>
 
 ## Economy
- +stats
- +register
- +fish
- +dailies
- +shop
- +buy
+ +stats<br>
+ +register<br>
+ +fish<br>
+ +dailies<br>
+ +shop<br>
+ +buy<br>
  (There used to be a stock market, but was removed due to lack of usage and 0 motivation to fix so many errors)
 
 ## Misc commands
- +userinfo
- +serverinfo
- +suggestion
- +changelog
- +visualizeHex
- +complementary
- +wikipedia
- +google
- +urbandictionary
- +ping
- +invite
- +source (you're here!)
+ +userinfo<br>
+ +serverinfo<br>
+ +suggestion<br>
+ +changelog<br>
+ +visualizeHex<br>
+ +complementary<br>
+ +wikipedia<br>
+ +google<br>
+ +urbandictionary<br>
+ +ping<br>
+ +invite<br>
+ +source (you're here!)<br>
 
 ## Bot Statistics
- +uptime
+ +uptime<br>
  +botstats
  
