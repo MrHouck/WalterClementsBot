@@ -466,13 +466,19 @@ class Fun(commands.Cog):
         fact = result["fact"]
         return await ctx.send(fact)
 
+    @commands.cooldown(1, 300, commands.BucketType.user)
+    @commands.guild_only()
     @commands.command(aliases=['pl'])
     async def place(self, ctx, *args):
+        """
+        A replica of r/place, on your server!
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT base64string FROM places WHERE guild_id = {ctx.guild.id}")
         response = cursor.fetchone()
         if str(args) == "()":
+            self.place.reset_cooldown(ctx)
             if response is None:      
                 sql = ("INSERT INTO places(guild_id, base64string) VALUES(?, ?)")
                 with open(THIS_FOLDER + '/resources/placetemplate.png', 'rb') as f:
@@ -509,12 +515,15 @@ class Fun(commands.Cog):
             #x offset of +34
             #y offset of -34
             if len(args) > 2:
+                self.place.reset_cooldown(ctx)
                 return await ctx.send("You supplied too many arguments! Do ``+place <coordinates> <color>``")
             coordinates = args[0]
             color = args[1]
             if color not in validColors:
+                self.place.reset_cooldown(ctx)
                 return await ctx.send(f"{ctx.author.mention}, invalid color! Please pick from `white, black, gray, lightgray, brown, red, orange, yellow, lime, green, lightblue, blue, purple, magenta, pink`")
             if coordinates[:-1] not in validCoords or coordinates[1] not in validCoords:
+                self.place.reset_cooldown(ctx)
                 return await ctx.send(f"{ctx.author.mention}, invalid position! Coordinates look like this: `d6` or `ac`")
             #convert coords to x and y 
             if coordinates[:-1].isalpha():
@@ -550,6 +559,29 @@ class Fun(commands.Cog):
             db.close()
             buffer.seek(0)
             await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
+
+    @place.error
+    async def place_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send(f"{ctx.author.mention}, You can't place a pixel, you're on cooldown right now. Here's the canvas though!")
+            db = sqlite3.connect('main.sqlite')
+            cursor = db.cursor()
+            cursor.execute(f"SELECT base64string FROM places WHERE guild_id = {ctx.guild.id}")
+            response = cursor.fetchone()
+            try:
+                base64string = response[0].replace("b'", '').replace("'", '')
+            except:
+                base64string = response[0]
+            im = Image.open(BytesIO(base64.b64decode(base64string)))
+            buffer = BytesIO()
+            im.save(buffer, 'png')
+            buffer.seek(0)
+            await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
+            buffer.close()
+            cursor.close()
+            db.close()
+        else:
+            pass
 
     @commands.command()
     @commands.guild_only()
