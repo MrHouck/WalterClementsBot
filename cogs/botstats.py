@@ -9,6 +9,9 @@ class BotStats(commands.Cog):
 
     @commands.command()
     async def uptime(self, ctx):
+        """
+        Get the uptime of the bot.
+        """
         current_time = time.time()
         difference = current_time - start_time
         text = str(datetime.timedelta(seconds=difference))
@@ -21,6 +24,9 @@ class BotStats(commands.Cog):
 
     @commands.command()
     async def botstats(self, ctx):
+        """
+        Get statistics of the bot.
+        """
         #UPTIME
         current_time = time.time()
         difference = current_time - start_time
@@ -31,8 +37,6 @@ class BotStats(commands.Cog):
         totalMembers = 0
         for guild in self.bot.guilds:
             totalMembers += guild.member_count
-
-
         ping = self.bot.latency
         if ping < 100:
             color = discord.Color.green()
@@ -44,7 +48,7 @@ class BotStats(commands.Cog):
         embed.add_field(name="Uptime", value='{}'.format(text))
         embed.add_field(name="Guild Count", value='{}'.format(guildNum), inline=False)
         embed.add_field(name="Total Members", value='{}'.format(totalMembers), inline=False)
-        embed.add_field(name="Client Latency", value='{}'.format(ping), inline=False)
+        embed.add_field(name="Client Latency", value='{}ms'.format(round(ping*1000)), inline=False)
         await ctx.send(embed=embed)
 
 def setup(client):

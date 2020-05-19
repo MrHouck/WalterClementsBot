@@ -15,6 +15,9 @@ class Economy(commands.Cog):
     @commands.command(aliases=['bal', 'balance'])
     @commands.guild_only()
     async def stats(self, ctx, member : discord.Member=None):
+        """
+        Get economy statistics of yourself or another user. The user must be registered.
+        """
         member = ctx.author if not member else member
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
@@ -43,6 +46,9 @@ class Economy(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def register(self, ctx):
+        """
+        Add yourself to the economy database.
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT user_id FROM economy WHERE guild_id = '{ctx.guild.id}' and user_id = '{ctx.author.id}'")
@@ -69,6 +75,9 @@ class Economy(commands.Cog):
     @commands.guild_only()
     @commands.cooldown(1, 5.0, commands.BucketType.user)
     async def fish(self, ctx):
+        """
+        Fish for different rarities of fish. (Must be registered)
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT user_id FROM economy WHERE guild_id = '{ctx.guild.id}' and user_id = '{ctx.author.id}'")
@@ -113,6 +122,27 @@ class Economy(commands.Cog):
                 catch = random.choice(catches)
                 weight = 1
                 value = 2
+            cursor.execute(f"SELECT user_id, badges FROM economy WHERE guild_id = '{ctx.guild.id}' and user_id = '{ctx.author.id}'")
+            result = cursor.fetchone()
+            userBadges = result[1]
+            if '💵' in userBadges:
+                value *= 1.1
+            elif '💸' in userBadges:
+                value *= 1.5
+            elif '💳' in userBadges:
+                value *= 2.0
+            elif '💰' in userBadges:
+                value *= 2.5
+            elif '📈' in userBadges:
+                value *= 2.75
+            elif '💎' in userBadges:
+                value *= 3.5
+            elif '😳' in userBadges:
+                value *= 5.0
+            elif '⭐' in userBadges:
+                value *= 10.0
+
+            value = round(value, 3)
             sql = ("UPDATE economy SET money = ? WHERE guild_id = ? and user_id = ?")
             val = (str(float(money) + value), str(ctx.guild.id), str(ctx.author.id))
             cursor.execute(sql, val)
@@ -124,6 +154,9 @@ class Economy(commands.Cog):
     @commands.command(aliases=['daily'])
     @commands.guild_only()
     async def dailies(self, ctx):
+        """
+        Get your free daily 500 dollars. (Must be registered)
+        """
         today = datetime.today()
         currentDay = today.day
         db = sqlite3.connect('main.sqlite')
@@ -164,21 +197,27 @@ class Economy(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def shop(self, ctx):
+        """
+        Display the shop.
+        """
         embed = discord.Embed(title='--Shop--',color=ctx.author.color)
-        embed.add_field(name='💵 - 1000 💠', value='\u200b', inline=False)
-        embed.add_field(name='💸 - 5000 💠', value='\u200b', inline=False)
-        embed.add_field(name='💳 - 15000 💠', value='\u200b', inline=False)
-        embed.add_field(name='💰 - 25000 💠', value='\u200b', inline=False)
-        embed.add_field(name='📈 - 50000 💠', value='\u200b', inline=False)
-        embed.add_field(name='💎 - 150000 💠', value='\u200b', inline=False)
-        embed.add_field(name='😳 - 500000 💠', value='\u200b', inline=False)
-        embed.set_footer(text='Note: These are badges. They don\'t affect your income at all.')
+        embed.add_field(name='💵 - 1000 💠', value='Gain 1.1x extra from fishing.', inline=True)
+        embed.add_field(name='💸 - 5000 💠', value='Gain 1.5x extra from fishing.', inline=True)
+        embed.add_field(name='💳 - 15000 💠', value='Gain 2.0x extra from fishing.', inline=True)
+        embed.add_field(name='💰 - 25000 💠', value='Gain 2.5x extra from fishing.', inline=True)
+        embed.add_field(name='📈 - 50000 💠', value='Gain 2.75x extra from fishing.', inline=True)
+        embed.add_field(name='💎 - 150000 💠', value='Gain 3.5x extra from fishing.', inline=True)
+        embed.add_field(name='😳 - 500000 💠', value='Gain 5x extra from fishing.', inline=True)
+        embed.add_field(name='⭐ - 1000000 💠', value='Gain 10x extra from fishing.', inline=True)
         await ctx.send(embed=embed)
         return
 
     @commands.command()
     @commands.guild_only()
     async def buy(self, ctx, badge):
+        """
+        Buy a badge from the shop (Must be registered)
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT user_id FROM economy WHERE guild_id = '{ctx.guild.id}' and user_id = '{ctx.author.id}'")
@@ -188,7 +227,7 @@ class Economy(commands.Cog):
             cursor.close()
             db.close()
         else:
-            badges = ['💵', '💸', '💳', '💰', '📈', '💎', '😳']
+            badges = ['💵', '💸', '💳', '💰', '📈', '💎', '😳', '⭐']
             isBadge = False
             isBadgeOwned = False
             cursor.execute(f"SELECT user_id, badges, money FROM economy WHERE guild_id = '{ctx.guild.id}' and user_id = '{ctx.author.id}'")
@@ -212,6 +251,8 @@ class Economy(commands.Cog):
                         cost=150000
                     elif i==6:
                         cost=500000
+                    elif i==7:
+                        cost=1000000
                 if badge in userBadges: # if the user owns the badge
                     isBadgeOwned = True
             if isBadge and isBadgeOwned == False: #if the user doesn't own the existing badge

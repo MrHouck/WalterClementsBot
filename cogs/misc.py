@@ -20,90 +20,109 @@ class Misc(commands.Cog):
     @commands.command(aliases=['uinfo', 'whois'])
     @commands.guild_only()
     async def userinfo(self, ctx, member: discord.Member):
+        """
+        Get information on a user.
+        """
         await ctx.trigger_typing()
-        """
-        Get a users ID, nickname, account creation date, server join date, roles, and top role. Also checks if they are a bot.
-        """
+        member = member if not None else ctx.author
         roles = [role for role in member.roles]
         embed = discord.Embed(colour=member.color,
                               timestamp=ctx.message.created_at)
         embed.set_author(name=f"User info - {member}")
         embed.set_thumbnail(url=member.avatar_url)
-        embed.set_footer(
-            text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         embed.add_field(name="User ID:", value=member.id, inline=False)
-        embed.add_field(name="Current nickname:",
-                        value=member.display_name, inline=False)
-
-        embed.add_field(name="Account created at:", value=member.created_at.strftime(
-            "%a, %#d %B %Y, %I:%M %p UTC"), inline=False)
-        embed.add_field(name="Joined server at:", value=member.joined_at.strftime(
-            "%a, %#d %B %Y %I:%M %p UTC"), inline=False)
-
-        embed.add_field(name=f"Roles ({len(roles)})", value=" ".join(
-            [role.mention for role in roles]), inline=False)
-        embed.add_field(name="Top role:",
-                        value=member.top_role.mention, inline=False)
-
+        embed.add_field(name="Current nickname:",value=member.display_name, inline=False)
+        embed.add_field(name="Account created at:", value=member.created_at.strftime("%a, %#d %B %Y, %I:%M %p UTC"), inline=False)
+        embed.add_field(name="Joined server at:", value=member.joined_at.strftime("%a, %#d %B %Y %I:%M %p UTC"), inline=False)
+        embed.add_field(name=f"Roles ({len(roles)})", value=" ".join([role.mention for role in roles]), inline=False)
+        embed.add_field(name="Top role:",value=member.top_role.mention, inline=False)
         embed.add_field(name="Bot?", value=member.bot, inline=False)
-
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['sinfo'])
+    @commands.command(aliases=['sinfo','server'])
     @commands.guild_only()
     async def serverinfo(self, ctx):
+        """
+        Get information on the server you are in.
+        """
         await ctx.trigger_typing()
-        """
-        Get information on a server, like its owner, id, region, creation date, category count, text channel count, voice channel count, member count, and role count.
-        """
         guild = ctx.guild
         embed = discord.Embed()
         embed.set_author(name=f"{guild}", icon_url=f"{guild.icon_url}")
-        embed.add_field(name="Owner", value=f"{guild.owner}", inline=True)
+        embed.add_field(name="Owner", value=f"{guild.owner.mention}", inline=True)
         embed.add_field(name="Region", value=f"{guild.region}", inline=True)
-        embed.add_field(name="Categories",
-                        value=f"{len(guild.categories)}", inline=True)
-        embed.add_field(name="Text Channels",
-                        value=f"{len(guild.text_channels)}", inline=True)
-        embed.add_field(name="Voice Channels",
-                        value=f"{len(guild.voice_channels)}", inline=True)
-        embed.add_field(
-            name="Members", value=f"{guild.member_count}", inline=True)
+        embed.add_field(name="Categories",value=f"{len(guild.categories)}", inline=True)
+        embed.add_field(name="Text Channels",value=f"{len(guild.text_channels)}", inline=True)
+        embed.add_field(name="Voice Channels",value=f"{len(guild.voice_channels)}", inline=True)
+        embed.add_field(name="Members", value=f"{guild.member_count}", inline=True)
         embed.add_field(name="Roles", value=f"{len(guild.roles)}", inline=True)
-        embed.set_footer(
-            text=f"Server ID: {guild.id} | {guild} was created at {guild.created_at.strftime('%a, %#d %B %Y, %I:%M %p UTC')}")
+        embed.add_field(name="Verification Level", value=f"{guild.verification_level}", inline=True)
+        embed.add_field(name="MFA Level", value=f"{guild.mfa_level}", inline=True)
+        embed.add_field(name="Server boosters", value=f"{guild.premium_subscription_count}", inline=True)
+        embed.add_field(name="Large", value=f"{guild.large}", inline=True)
+        embed.add_field(name="Emoji Limit", value=f"{guild.emoji_limit}", inline=True)
+        embed.add_field(name="Bitrate Limit", value=f"{guild.bitrate_limit}", inline=True)
+        embed.add_field(name="File Size Limit", value=f"{guild.filesize_limit}", inline=True)
+        embed.add_field(name="Icon URL", value=f"[URL]({guild.icon_url})", inline=True)
+        embed.set_footer(text=f"Server ID: {guild.id} | {guild} was created at {guild.created_at.strftime('%a, %#d %B %Y, %I:%M %p UTC')}")
         await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
     async def suggestion(self, ctx, *, suggestion):
+        """
+        Send me a suggestion for this bot! Please note: usernames are recorded, you will be blacklisted if you abuse this feature.
+        """
         await ctx.trigger_typing()
+        with open('./config.json', 'r') as f:
+            stuff = json.load(f)
+        if ctx.author.id in stuff["blacklistedUsers"]:
+            embed = discord.Embed(description="You have been permanently blacklisted from this command")
+            return await ctx.send(embed=embed)
+
         user = self.bot.get_user(250067504641081355)
         sentId = ctx.author.id
         mention = f'<@{sentId}>'
         await user.send(f'{mention} | {suggestion}')
-        await user.send(suggestion)
         embed = discord.Embed()
-        embed.add_field(
-            name="Thank you!", value="Your suggestion was sent successfully.", inline=True)
+        embed.add_field(name="Thank you!", value="Your suggestion was sent successfully.", inline=True)
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.is_owner()
+    async def blacklistUser(self, ctx, user: discord.Member):
+        """
+        Blacklists a user from using +suggestion (bot owner only)
+        """
+        with open('./config.json', 'r') as f:
+            stuff = json.load(f)
+            f.close()
+        stuff["blacklistedUsers"].append(user.id)
+        with open('./config.json', 'w') as f:
+            json.dump(stuff, f, indent=4)
+            f.close()
+        embed = discord.Embed(description=f"Permanently blacklisted {user.name}")
+        return await ctx.send(embed=embed)
+    @commands.command()
     @commands.guild_only()
     async def changelog(self, ctx):
+        """
+        View the changelog for the bot.
+        """
         await ctx.trigger_typing()
-        embed = discord.Embed(title="v1.8.5", color=0xff80ff)
-        embed.add_field(
-            name="Commands: ", value="Added ``+jackbox`` and probably more i'm forgetting", inline=False)
-        embed.add_field(name="Fixes/Changes: ", value="- bug fixes\n- Added jackbox command, allows you to post a jackbox announcement in a channel that auto-updates with the players and audience count.\n-- SPECIFIC TO THIS SERVER-- there is a new channel where you can type a sentence and it'll add it to a text document which will get uploaded to a text file hosted at ziad87.me/paragraph.txt - try it out.", inline=False)
-        embed.add_field(name="That's all for now!",
-                        value="If you have any ideas or suggestions, lemme know by using the +suggestion command or just dming me!", inline=False)
-        embed.set_footer(text="v1.8.4")
+        embed = discord.Embed(title="v1.9.2", color=0xff80ff)
+        embed.add_field(name="Changes: ", value="You can now DM walter, and he'll respond!\n- Removed paragraph creator, underused. You can view the backups by visiting these links: https://ziad87.net/paragraph.txt https://ziad87.net/paragraph1.txt, https://ziad87.net/paragraph2.txt, https://ziad87.net/paragraph3.txt\n- Added Verification level, MFA level, amount of server boosters, large, emoji limit, bitrate limit, filesize limit, and icon url to +serverinfo\n- Completely overhauled +help, it's now much cooler and way more helpful. (Might be getting another overhaul here soon)\n- You can now be blacklisted from +suggestion if you spam it\n- Removed +penis\n- Made badges actually do stuff in the economy\n- Added a ⭐ badge to the economy\n- Fixed botstats displaying ping as a long decimal\n- Fixed +fbi giving an image not found error", inline=False)
+        embed.add_field(name="That's all for now!",value="If you have any ideas or suggestions, lemme know by using the +suggestion command or just dming me!", inline=False)
+        embed.set_footer(text="v1.9.2 (at this rate i'm just randomly picking numbers)")
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['hex'])
     @commands.guild_only()
     async def visualizeHex(self, ctx, hexCode):
+        """
+        Get the color for a hex code.
+        """
         await ctx.trigger_typing()
         if '#' in hexCode:
             hexCode = hexCode.replace('#', '')
@@ -121,6 +140,9 @@ class Misc(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def complementary(self, ctx, hexCode):
+        """
+        Get the complementary color to a hex code color.
+        """
         await ctx.trigger_typing()
         baseline = (255, 255, 255)
         if '#' in hexCode:
@@ -140,6 +162,9 @@ class Misc(commands.Cog):
     @commands.command(aliases=['wiki', 'article'])
     @commands.guild_only()
     async def wikipedia(self, ctx, *, searchterm):
+        """
+        Search wikipedia for whatever you want.
+        """
         searchterm = searchterm.replace('@', '')
         try:
             page = wikipedia.page(searchterm, auto_suggest=False)
@@ -161,6 +186,9 @@ class Misc(commands.Cog):
     @commands.command(aliases=['google', 'search'])
     @commands.guild_only()
     async def google_search(self, ctx, *, query):
+        """
+        Get google search results for a query.
+        """
         query = query.replace('@', '')
         embed = discord.Embed(title=f'Google Search results for: {query}')
         message = ''
@@ -174,6 +202,9 @@ class Misc(commands.Cog):
     @commands.command(aliases=['urban', 'ud'])
     @commands.guild_only()
     async def urbandictionary(self, ctx, *, query):
+        """
+        Search a word on urban dictionary
+        """
         query = query.replace('@', '')
         url_search = query.replace(' ', '%20')
         definition = urbandict.define(query)
@@ -202,6 +233,9 @@ class Misc(commands.Cog):
     @commands.is_owner()
     @commands.guild_only()
     async def logout(self, ctx):
+        """
+        Shut down the bot (Bot owner only).
+        """
         await ctx.trigger_typing()
         if ctx.author.id == 250067504641081355:
             await ctx.send('🔋 | Shutting down...')
@@ -211,12 +245,18 @@ class Misc(commands.Cog):
 
     @commands.command()
     async def invite(self, ctx):
+        """
+        Get the invite link for the bot.
+        """
         embed = discord.Embed(title='Invite me!',
                               url="https://mrhouck.github.io/walterbot/")
         await ctx.send(embed=embed)
 
     @commands.command()
     async def source(self, ctx):
+        """
+        View the source code for the bot.
+        """
         embed = discord.Embed(
             title='Source Code', url="https://github.com/MrHouck/WalterClementsBot")
         embed.set_footer(text="i know my code is terrible")

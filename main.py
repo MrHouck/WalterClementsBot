@@ -4,14 +4,16 @@ from discord.utils import *
 from itertools import cycle
 import logging
 
-client = commands.Bot(command_prefix =commands.when_mentioned_or('+'), case_insensitive=True)
+client = commands.Bot(command_prefix=commands.when_mentioned_or('+'), case_insensitive=True)
 client.remove_command('help')
 status = cycle(['walter', "i'm watching you...", 'sweeping up the dust', 'crunching some numbers...', '+help', 'sex penis!?!11/??', 'الله حمود', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'allah', '+help'])
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
+
 handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+
 logger.addHandler(handler)
 
 @client.command()
@@ -31,7 +33,6 @@ async def reload(ctx, cog):
         await ctx.send(embed=embed)
         print(f'The module {cog} could not be loaded.')
         raise e
-
 
 @client.command()
 @commands.is_owner()
@@ -75,6 +76,7 @@ async def on_ready():
     print("#    Walter_Clements_Bot    #")
     print("#                           #")
     print("#---------------------------#")
+
     change_status.start()
 
 
@@ -82,46 +84,47 @@ async def on_ready():
 #       DM Autorresponder       #
 #                               #
 
-#@client.event
-#async def on_message(message):
-#    if message.guild is None:
-#        responses = ['Hey there.', 'bruh',
-#                    'walter', 'i will eat you', 
-#                    'Leave me alone', 'Nothing to see here...', 
-#                    'Go away', 'Haha yeah', 
-#                    'oof', 'Should I know you?', 
-#                    'affirmative', 'where am i', 
-#                    'hope you\'re having a nice day', 'never dm me again',
-#                    'how are you', 'NO',
-#                    'i literally could not care less', 'don\'t remember asking',
-#                    'i would have to go with yes', 'am confused',
-#                    'why are you talking to a robot', 'i don\'t care',
-#                    'sure', 'dms are closed go home',
-#                    'bup', 'what do you think',
-#                    'trust no one', 'of course',
-#                    'don\'t you have something better to do?', '?',
-#                    'no u', 'no can do',
-#                    'psssst... i\'m not a real person', 'go clean your room',
-#                    'wee snaw', '*cries*',
-#                    'owo', 'I\'m sorry, but you do not have permission to perform this command. Please contact the server administrators if you think this is an error.',
-#                    'how are you not in school?', 'fantastic',
-#                    'who put you on the planet', 'get a life',
-#                    'do you are have stupid', 'despacito',
-#                    'if you say so', 'don\'t think so',
-#                    'hope you\'re having a nice day', 'QUIET DOWN I\'M PLAYING FORTNITE',
-#                    'take care!', 'you can go now',
-#                    'pizza time', 'quit horsing around!',
-#                    'huh?', 'shut up',
-#                    'amazing', 'yo',
-#                    'aaaaaaa', 'ok',
-#                    'loser']
-#        await message.author.send(random.choice(responses))
-#    else:
-#        await client.process_commands(message)
+@client.event
+async def on_message(message):
+    if message.guild is None:
+        responses = ['Hey there.', 'bruh',
+                    'walter', 'i will eat you', 
+                    'Leave me alone', 'Nothing to see here...', 
+                    'Go away', 'Haha yeah', 
+                    'oof', 'Should I know you?', 
+                    'affirmative', 'where am i', 
+                    'hope you\'re having a nice day', 'never dm me again',
+                    'how are you', 'NO',
+                    'i literally could not care less', 'don\'t remember asking',
+                    'i would have to go with yes', 'am confused',
+                    'why are you talking to a robot', 'i don\'t care',
+                    'sure', 'dms are closed go home',
+                    'bup', 'what do you think',
+                    'trust no one', 'of course',
+                    'don\'t you have something better to do?', '?',
+                    'no u', 'no can do',
+                    'psssst... i\'m not a real person', 'go clean your room',
+                    'wee snaw', '*cries*',
+                    'owo', 'I\'m sorry, but you do not have permission to perform this command. Please contact the server administrators if you think this is an error.',
+                    'how are you not in school?', 'fantastic',
+                    'who put you on the planet', 'get a life',
+                    'do you are have stupid', 'despacito',
+                    'if you say so', 'don\'t think so',
+                    'hope you\'re having a nice day', 'QUIET DOWN I\'M PLAYING FORTNITE',
+                    'take care!', 'you can go now',
+                    'pizza time', 'quit horsing around!',
+                    'huh?', 'shut up',
+                    'amazing', 'yo',
+                    'aaaaaaa', 'ok',
+                    'loser']
+        await message.author.send(random.choice(responses))
+    else:
+        try:
+            await client.process_commands(message)
+        except:
+            pass
 
-
-
-@tasks.loop(seconds=45)
+@tasks.loop(seconds=45) 
 async def change_status():
     await client.change_presence(activity=discord.Game(next(status)))
 
@@ -134,4 +137,9 @@ for cog in os.listdir(".\\cogs"):
             print(f'{cog} cannot be loaded:')
             raise e
 
-client.run(os.environ.get('WalterBotToken'))
+
+with open("config.json", "r") as f:
+    config = json.load(f)
+    f.close()
+
+client.run(config["token"])

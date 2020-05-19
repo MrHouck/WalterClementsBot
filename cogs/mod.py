@@ -14,22 +14,26 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, *, reason="None"):
+    async def kick(self, ctx, member: discord.Member, *, reason):
+        """
+        Kick a member.
+        """ 
+        if reason is None:
+            reason="None"
         await ctx.trigger_typing()
-        """
-        Kick a member for whatever reason.
-        """
         await member.kick(reason=reason)
         await ctx.send(f'{member.mention} kicked by {ctx.author}. [{reason}]')
 
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def ban(self, ctx, member : discord.Member, *, reason="None"):
+    async def ban(self, ctx, member : discord.Member, *, reason=None):
+        """
+        Ban a member.
+        """
+        if reason is None:
+            reason = "None"
         await ctx.trigger_typing()
-        """
-        Ban a member for whatever reason.
-        """
         await member.ban(reason=reason)
         embed=discord.Embed(title="Success!", color=0x008000)
         embed.add_field(name="Banned User:", value=f"{member}", inline=False)
@@ -57,10 +61,10 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int):
-        await ctx.trigger_typing()
         """
         Purge an amount of messages in a channel.
         """
+        await ctx.trigger_typing()
         await ctx.channel.purge(limit=amount + 1)
         embed = discord.Embed()
         embed.add_field(name=f"Purged {amount} messages", value=f"Channel: #{ctx.channel}", inline=False)
@@ -71,10 +75,10 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
     async def role(self, ctx, member : discord.Member, *, role):
-        await ctx.trigger_typing()
         """
         Give someone a role or remove it if they already have it.
         """
+        await ctx.trigger_typing()
         guild = ctx.guild
         message = ctx.message
         emoji = '\N{THUMBS UP SIGN}'
@@ -96,11 +100,13 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
-    async def softban(self, ctx, member : discord.Member, *, reason="None"):
-        await ctx.trigger_typing()
+    async def softban(self, ctx, member : discord.Member, *, reason=None):
         """
         Ban a user then instantly unban them. Equivalent to a kick, but removes all their messages.
         """
+        if reason is None:
+            reason = "None"
+        await ctx.trigger_typing()
         await member.ban(reason=reason)
         banned_users = await ctx.guild.bans()
         await ctx.guild.unban(member)
@@ -110,10 +116,10 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
-        await ctx.trigger_typing()
         """
         Unban someone who was banned.
         """
+        await ctx.trigger_typing()
         banned_users = await ctx.guild.bans()
         member_name, member_discriminator = member.split('#')
         for ban_entry in banned_users:
@@ -143,11 +149,13 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def mute(self, ctx, member : discord.Member, time, *, reason="None"):
+    async def mute(self, ctx, member : discord.Member, time, *, reason=None):
+        """
+        Mute a user.
+        """
+        if reason is None:
+            reason = "None"
         await ctx.trigger_typing()
-        """
-        Gives the tagged user a role to prevent them from talking.
-        """
         s = False
         m = False
         h = False
@@ -260,11 +268,13 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
-    async def unmute(self, ctx, member : discord.Member, *, reason="None"):
+    async def unmute(self, ctx, member : discord.Member, *, reason=None):
+        """
+        Unmute someone who is muted.
+        """
+        if reason is None:
+            reason = "None"
         await ctx.trigger_typing()
-        """
-        Unmute someone.
-        """
         guild = ctx.guild
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
@@ -301,7 +311,20 @@ class Mod(commands.Cog):
     @commands.command(aliases=['addrole'])
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
-    async def createrole(self, ctx, rolename="new role", color=discord.Colour.default(), hoist=False, mentionable=True, reason="None."):
+    async def createrole(self, ctx, rolename, color, hoist, mentionable, reason):
+        """
+        Create a role.
+        """
+        if reason is None:
+            reason = "None"
+        if rolename is None:
+            rolename = "new role"
+        if hoist is None:
+            hoist = False
+        if mentionable is None:
+            mentionable = True
+        if color is None:
+            color=discord.Color.default()
         await ctx.trigger_typing()
         guild = ctx.guild
         await guild.create_role(name=rolename, colour=color, hoist=hoist, mentionable=mentionable, reason=reason)
@@ -314,11 +337,13 @@ class Mod(commands.Cog):
     @commands.command(aliases=['delrole', 'removerole'])
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
-    async def deleterole(self, ctx, rolename=None, *, reason="None."):
-        await ctx.trigger_typing()
+    async def deleterole(self, ctx, rolename=None, *, reason=None):
         """
         Delete a role. Note: To remove a role with spaces in it, you must put the role in quotations.
         """
+        if reason is None:
+            reason = "None."
+        await ctx.trigger_typing()
         if rolename==None:
             embed=discord.Embed(color=0xff2d2d)
             embed.add_field(name="Error", value="You must specify a role to delete.", inline=True)
@@ -347,6 +372,9 @@ class Mod(commands.Cog):
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def autorole(self, ctx):
+        """
+        Base command for autorole.
+        """
         if ctx.invoked_subcommand == None:
             return await ctx.send('You need to specify a subcommand! (enable, disable, setrole)')
 
@@ -354,6 +382,9 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setrole(self, ctx, *, role):
+        """
+        Set the role that is to be automatically assigned when a user joins.
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         guild = ctx.guild
@@ -380,6 +411,9 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def disable(self, ctx):
+        """
+        Disable the autorole module.
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         guild = ctx.guild
@@ -399,6 +433,9 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.has_permissions(manage_server=True)
     async def enable(self, ctx):
+        """
+        Enable the autorole module.
+        """
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         guild = ctx.guild
@@ -414,114 +451,6 @@ class Mod(commands.Cog):
             cursor.close()
             db.close()
 
-    @commands.command()
-    @commands.has_permissions(administrator=True)
-    async def lockdown(self, ctx, off):
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        cursor.execute(f"SELECT raidMode FROM lockdown WHERE guild_id = '{ctx.guild.id}'")
-        result = cursor.fetchone()
-        if result is None:
-            sql = ("INSERT INTO lockdown(guild_id, raidMode) VALUES(?,?)")
-            val = (ctx.guild.id, "true")
-            cursor.execute(sql, val)
-            db.commit()
-            cursor.execute(f"SELECT raidMode FROM lockdown WHERE guild_id = '{ctx.guild.id}'")
-            result = cursor.fetchone()
-            raidmode = result[0]
-        else:
-            raidmode = result[0]
-        if off != 'off' and off != 'on':
-            return await ctx.send('Specify if you are turning it ``off`` or ``on``')
-        elif off == 'off':
-            if raidmode == "true":
-                raidmode = "false"
-                cursor.execute(f"UPDATE lockdown SET raidMode = '{raidmode}' WHERE guild_id = {ctx.guild.id}")
-                db.commit()
-                await ctx.send("🚨❗ **__RAIDMODE__** ***__DISABLED__*** ❗🚨")
-                cursor.execute(f"SELECT blacklistedUsers FROM lockdown WHERE guild_id = {ctx.guild.id}")
-                result = cursor.fetchone()
-                blacklistedUsers = result[0]
-                users = blacklistedUsers.split(', ')
-                for user in users:
-                    user = user[:-5]
-                    member = discord.utils.get(ctx.guild.members, name=user)
-                    role = get(ctx.guild.roles, name="Muted")
-                    await member.remove_roles(role)
-                cursor.execute(f"UPDATE lockdown SET blacklistedUsers = NULL WHERE guild_id = {ctx.guild.id}")
-                cursor.close()
-                db.close()
-            else:
-                return await ctx.send("Raidmode is already disabled")
-        else:
-            if raidmode == "false":
-                raidmode = "true"
-                cursor.execute(f"UPDATE lockdown SET raidMode = '{raidmode}' WHERE guild_id = {ctx.guild.id}")
-                db.commit()
-                await ctx.send("🚨❗ **__RAIDMODE ENABLED__** ❗🚨")
-                for user in ctx.guild.members:
-                    time=datetime.now()
-                    diff = time - timedelta(hours=1)
-                    time_joined = user.joined_at
-                    if diff < time_joined:
-                        cursor.execute(f"SELECT blacklistedUsers FROM lockdown WHERE guild_id = '{ctx.guild.id}'")
-                        result = cursor.fetchone()
-                        if result[0] is None:
-                            newBlacklisted = user
-                        else:
-                            if str(user) in result[0]:
-                                newBlacklisted = result[0]
-                            else:
-                                newBlacklisted = result[0] + ", " + str(user)
-                        role = get(ctx.guild.roles, name="Muted")
-                        if role is None: 
-                            return await ctx.send("Setup a muted role first.")
-                        await user.add_roles(role)
-                        cursor.execute(f"UPDATE lockdown SET blacklistedUsers = '{newBlacklisted}'")
-                        db.commit()
-                        cursor.close()
-                        db.close()
-            else:
-                return await ctx.send("Raidmode is already enabled")
-       
-
-    @commands.Cog.listener()
-    async def on_member_join(self, member):
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        guild_id = member.guild.id
-        cursor.execute(f"SELECT enabled, role FROM autorole WHERE guild_id = '{guild_id}'")
-        result = cursor.fetchone()
-        cursor.execute(f"SELECT raidMode FROM lockdown WHERE guild_id = '{guild_id}'")
-        enabled=cursor.fetchone()
-        if result == None:
-            return
-        if result[0] == "false":
-            return
-        else:
-            if enabled[0] == "false" or enabled == None:
-                role = get(member.guild.roles, name=result[1])
-                if role == None:
-                    return
-                await member.add_roles(role)
-            else:
-                role = get(member.guild.roles, name="Muted")
-                if role == None:
-                    return
-                await member.add_roles(role)
-                cursor.execute(f"SELECT blacklistedUsers FROM lockdown WHERE guild_id = '{member.guild.id}'")
-                result = cursor.fetchone()
-                if result[0] is None:
-                    newBlacklisted = user
-                else:
-                    if str(user) in result[0]: #literally impossible but you never know where your shit code could go wrong
-                        newBlacklisted = result[0]
-                    else:
-                        newBlacklisted = result[0] + ", " + str(user)
-                        cursor.execute(f"UPDATE lockdown SET blacklistedUsers = '{newBlacklisted}'")
-                        db.commit()
-                        cursor.close()
-                        db.close()
 def setup(client):
     client.add_cog(Mod(client))
     now = datetime.now()

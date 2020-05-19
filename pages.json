@@ -1,0 +1,376 @@
+{
+    "0": {
+        "achievement": {
+            "name": "achievement",
+            "help": "Generate a minecraft achievement.",
+            "usage": "[message]",
+            "aliases": [
+                "ach"
+            ]
+        },
+        "autorole": {
+            "name": "autorole",
+            "help": "Base command for autorole.",
+            "usage": ""
+        },
+        "ban": {
+            "name": "ban",
+            "help": "Ban a member.",
+            "usage": "<member> [reason]"
+        },
+        "bird": {
+            "name": "bird",
+            "help": "Get an image of a bird.",
+            "usage": "",
+            "aliases": [
+                "birb"
+            ]
+        },
+        "blacklistUser": {
+            "name": "blacklistUser",
+            "help": "Blacklists a user from using +suggestion (bot owner only)",
+            "usage": "<user>"
+        },
+        "botstats": {
+            "name": "botstats",
+            "help": "Get statistics of the bot.",
+            "usage": ""
+        },
+        "buy": {
+            "name": "buy",
+            "help": "Buy a badge from the shop (Must be registered)",
+            "usage": "<badge>"
+        },
+        "cat": {
+            "name": "cat",
+            "help": "Get an image of a cat.",
+            "usage": ""
+        },
+        "catfact": {
+            "name": "catfact",
+            "help": "Get a random fact about a cat.",
+            "usage": ""
+        },
+        "changelog": {
+            "name": "changelog",
+            "help": "View the changelog for the bot.",
+            "usage": ""
+        }
+    },
+    "1": {
+        "chatbot": {
+            "name": "chatbot",
+            "help": "Chat with a chatbot.",
+            "usage": "<message>"
+        },
+        "clear": {
+            "name": "clear",
+            "help": "Purge an amount of messages in a channel.",
+            "usage": "<amount>",
+            "aliases": [
+                "purge"
+            ]
+        },
+        "complementary": {
+            "name": "complementary",
+            "help": "Get the complementary color to a hex code color.",
+            "usage": "<hexCode>"
+        },
+        "createrole": {
+            "name": "createrole",
+            "help": "Create a role.",
+            "usage": "<rolename> <color> <hoist> <mentionable> <reason>",
+            "aliases": [
+                "addrole"
+            ]
+        },
+        "dailies": {
+            "name": "dailies",
+            "help": "Get your free daily 500 dollars. (Must be registered)",
+            "usage": "",
+            "aliases": [
+                "daily"
+            ]
+        },
+        "deleterole": {
+            "name": "deleterole",
+            "help": "Delete a role. Note: To remove a role with spaces in it, you must put the role in quotations.",
+            "usage": "[rolename] [reason]",
+            "aliases": [
+                "delrole",
+                "removerole"
+            ]
+        },
+        "dog": {
+            "name": "dog",
+            "help": "Get an image of a dog.",
+            "usage": ""
+        },
+        "dogfact": {
+            "name": "dogfact",
+            "help": "Get a random fact about a dog.",
+            "usage": ""
+        },
+        "eightball": {
+            "name": "eightball",
+            "help": "Consult the magic 8 ball with your question.",
+            "usage": "<question>",
+            "aliases": [
+                "8ball"
+            ]
+        },
+        "fbi": {
+            "name": "fbi",
+            "help": "Create your own FBI meme!",
+            "usage": "<message>"
+        }
+    },
+    "2": {
+        "fish": {
+            "name": "fish",
+            "help": "Fish for different rarities of fish. (Must be registered)",
+            "usage": ""
+        },
+        "google_search": {
+            "name": "google_search",
+            "help": "Get google search results for a query.",
+            "usage": "<query>",
+            "aliases": [
+                "google",
+                "search"
+            ]
+        },
+        "help": {
+            "name": "help",
+            "help": "hmmm......",
+            "usage": ""
+        },
+        "hug": {
+            "name": "hug",
+            "help": "Hug gif.",
+            "usage": ""
+        },
+        "invite": {
+            "name": "invite",
+            "help": "Get the invite link for the bot.",
+            "usage": ""
+        },
+        "jackbox": {
+            "name": "jackbox",
+            "help": "Host a jackbox game in a discord text channel with a specified code.",
+            "usage": "<channel> <code>"
+        },
+        "kick": {
+            "name": "kick",
+            "help": "Kick a member.",
+            "usage": "<member> <reason>"
+        },
+        "koalafact": {
+            "name": "koalafact",
+            "help": "Get a random fact about a koala.",
+            "usage": ""
+        },
+        "load": {
+            "name": "load",
+            "help": "Load a cog. (Bot owner only)",
+            "usage": "<cog>"
+        },
+        "logout": {
+            "name": "logout",
+            "help": "Shut down the bot (Bot owner only).",
+            "usage": ""
+        }
+    },
+    "3": {
+        "logs": {
+            "name": "logs",
+            "help": "Base command for the logging module.",
+            "usage": ""
+        },
+        "mute": {
+            "name": "mute",
+            "help": "Mute a user.",
+            "usage": "<member> <time> [reason]"
+        },
+        "nonsense": {
+            "name": "nonsense",
+            "help": "Takes a message you enter and mushes it into nonsense.",
+            "usage": "<message>"
+        },
+        "panda": {
+            "name": "panda",
+            "help": "Get an image of a panda.",
+            "usage": ""
+        },
+        "pandafact": {
+            "name": "pandafact",
+            "help": "Get a random fact about a panda.",
+            "usage": ""
+        },
+        "ping": {
+            "name": "ping",
+            "help": "Gets the client latency. (The ping of the bot)",
+            "usage": ""
+        },
+        "randomname": {
+            "name": "randomname",
+            "help": "Generate a completey random username.",
+            "usage": ""
+        },
+        "register": {
+            "name": "register",
+            "help": "Add yourself to the economy database.",
+            "usage": ""
+        },
+        "reload": {
+            "name": "reload",
+            "help": "Reload a cog. (Bot owner only)",
+            "usage": "<cog>"
+        },
+        "roastme": {
+            "name": "roastme",
+            "help": "Roast yourself. (There will be repeated roasts)",
+            "usage": "",
+            "aliases": [
+                "roast"
+            ]
+        }
+    },
+    "4": {
+        "role": {
+            "name": "role",
+            "help": "Give someone a role or remove it if they already have it.",
+            "usage": "<member> <role>"
+        },
+        "say": {
+            "name": "say",
+            "help": "Make me say something!",
+            "usage": "<message>"
+        },
+        "sentence": {
+            "name": "sentence",
+            "help": "Generate a completely random sentence.",
+            "usage": ""
+        },
+        "serverinfo": {
+            "name": "serverinfo",
+            "help": "Get information on the server you are in.",
+            "usage": "",
+            "aliases": [
+                "sinfo",
+                "server"
+            ]
+        },
+        "shop": {
+            "name": "shop",
+            "help": "Display the shop.",
+            "usage": ""
+        },
+        "softban": {
+            "name": "softban",
+            "help": "Ban a user then instantly unban them. Equivalent to a kick, but removes all their messages.",
+            "usage": "<member> [reason]"
+        },
+        "source": {
+            "name": "source",
+            "help": "View the source code for the bot.",
+            "usage": ""
+        },
+        "space": {
+            "name": "space",
+            "help": "Get information about the ISS.",
+            "usage": ""
+        },
+        "stats": {
+            "name": "stats",
+            "help": "Get economy statistics of yourself or another user. The user must be registered.",
+            "usage": "[member]",
+            "aliases": [
+                "bal",
+                "balance"
+            ]
+        },
+        "suggestion": {
+            "name": "suggestion",
+            "help": "Send me a suggestion for this bot! Please note: usernames are recorded, you will be blacklisted if you abuse this feature.",
+            "usage": "<suggestion>"
+        }
+    },
+    "5": {
+        "translate": {
+            "name": "translate",
+            "help": "Translate a phrase from any language into english. (Might not be 100% accurate)",
+            "usage": "<phrase>"
+        },
+        "unban": {
+            "name": "unban",
+            "help": "Unban someone who was banned.",
+            "usage": "<member>"
+        },
+        "unload": {
+            "name": "unload",
+            "help": "Unload a cog. (Bot owner only)",
+            "usage": "<cog>"
+        },
+        "unmute": {
+            "name": "unmute",
+            "help": "Unmute someone who is muted.",
+            "usage": "<member> [reason]"
+        },
+        "uptime": {
+            "name": "uptime",
+            "help": "Get the uptime of the bot.",
+            "usage": ""
+        },
+        "urbandictionary": {
+            "name": "urbandictionary",
+            "help": "Search a word on urban dictionary",
+            "usage": "<query>",
+            "aliases": [
+                "urban",
+                "ud"
+            ]
+        },
+        "userinfo": {
+            "name": "userinfo",
+            "help": "Get information on a user.",
+            "usage": "<member>",
+            "aliases": [
+                "uinfo",
+                "whois"
+            ]
+        },
+        "uwu": {
+            "name": "uwu",
+            "help": "Make uw mehssage a wittwe mowe uwu.",
+            "usage": "<message>",
+            "aliases": [
+                "owo"
+            ]
+        },
+        "visualizeHex": {
+            "name": "visualizeHex",
+            "help": "Get the color for a hex code.",
+            "usage": "<hexCode>",
+            "aliases": [
+                "hex"
+            ]
+        },
+        "walter": {
+            "name": "walter",
+            "help": "walter.",
+            "usage": ""
+        }
+    },
+    "6": {
+        "wikipedia": {
+            "name": "wikipedia",
+            "help": "Search wikipedia for whatever you want.",
+            "usage": "<searchterm>",
+            "aliases": [
+                "wiki",
+                "article"
+            ]
+        }
+    }
+}

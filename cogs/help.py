@@ -1,31 +1,126 @@
 import discord
 from discord.ext import commands
+from discord.ext import menus
 from datetime import datetime
+import itertools
+import json
+import os
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+
+
+commandcount = 0
+totalPages = 0
+
+def constructPage(index):
+    with open('pages.json', 'r') as f:
+        pages = json.load(f)
+        f.close()
+
+    embed = discord.Embed(color=0x7289da, title=f"**Commands**")
+    embed.set_author(name=f'Page {index+1}/{len(pages)} ({commandcount} commands)')
+    for command in pages[str(index)]:
+        if "aliases" in pages[str(index)][command]:
+            cmd = f'+[{pages[str(index)][command]["name"]}'
+            for alias in pages[str(index)][command]["aliases"]:
+                cmd += f'|{alias}'
+            cmd += ']'
+        else:
+            cmd = f'+{pages[str(index)][command]["name"]}'
+        cmdHelp = pages[str(index)][command]["help"]
+        if pages[str(index)][command]["usage"] == "":
+            cmdHelp += f'\n`Usage: +{command}`'
+        else:
+            cmdHelp += f'\n`Usage: +{command} {pages[str(index)][command]["usage"]}`'
+        embed.add_field(name=cmd, value=cmdHelp, inline=False)
+    return embed
+
+class HelpMenu(menus.Menu):
+    pageIndex = 0
+
+    async def send_initial_message(self, ctx, channel):        
+        return await channel.send(embed=constructPage(self.pageIndex))
+
+    @menus.button('\N{BLACK LEFT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
+    async def on_to_start_button(self, payload):
+        self.pageIndex = 0
+        await self.message.edit(embed=constructPage(self.pageIndex))
+
+
+    @menus.button('\N{BLACK LEFT-POINTING TRIANGLE}')
+    async def on_back_one_button(self, payload):
+        self.pageIndex = self.pageIndex - 1
+        if self.pageIndex < 0:
+            self.pageIndex = totalPages-1
+        await self.message.edit(embed=constructPage(self.pageIndex))
+
+    @menus.button('\N{BLACK SQUARE FOR STOP}')
+    async def on_stop_button(self, payload):
+        self.pageIndex = 0
+        await self.message.delete()
+    @menus.button('\N{BLACK RIGHT-POINTING TRIANGLE}')
+    async def on_forward_one_button(self, payload):
+        self.pageIndex = self.pageIndex + 1
+        if self.pageIndex > totalPages-1:
+            self.pageIndex = 0
+        await self.message.edit(embed=constructPage(self.pageIndex))
+
+
+    @menus.button('\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}')
+    async def on_to_end_button(self, payload):
+        self.pageIndex = totalPages-1
+        await self.message.edit(embed=constructPage(self.pageIndex))
+
 
 class Help(commands.Cog):
     def __init__(self, client):
         self.bot = client
 
-    @commands.command(pass_context=True)
-    @commands.guild_only()
+    def createJSON(self, commands):
+        pages = {}   
+        i = 0
+        j = 0
+        sortedCommands = []
+        for command in commands:
+            sortedCommands.append(command.name)
+        
+        sortedCommands.sort()        
+        for command in sortedCommands:
+            command = self.bot.get_command(command)
+            if j == 0:
+                pages[str(i)] = {}
+            pages[str(i)][command.name] = {}
+            pages[str(i)][command.name]["name"] = {}
+            pages[str(i)][command.name]["help"] = {}
+            pages[str(i)][command.name]["usage"] = {}
+            pages[str(i)][command.name]["name"] = command.name
+            commandHelp = command.help
+            pages[str(i)][command.name]["help"] = command.help
+            pages[str(i)][command.name]["usage"] = command.signature
+            if len(command.aliases) >= 1:
+                pages[str(i)][command.name]["aliases"] = []
+                pages[str(i)][command.name]["aliases"] = command.aliases
+            j += 1
+            if j >= 10:
+                i += 1
+                j = 0
+        global totalPages
+        totalPages = len(pages)
+        with open('pages.json', 'w') as f:
+            json.dump(pages, f, indent=4)
+
+    @commands.command()
     async def help(self, ctx):
-        await ctx.trigger_typing()
-        if ctx.guild.id != 669042023856340993:
-            embed=discord.Embed(title="Help", color=0x4966cb)
-            embed.add_field(name="🥳 **Fun:**", value="``8ball, achievement, bird, cat, catfact, chatbot, dog, dogfact, fbi, hug, koalafact, norris, panda, pandafact, penis, randomname, retard, sentence, space, uwu, walter``", inline=False)
-            embed.add_field(name="🛠️ **Moderation:**", value="``autorole[enable, disable, setrole], ban, clear, createrole, deleterole, lockdown[on, off], logs[enable(setting), disable(setting), setchannel, settings], mute, unban, unmute, role, softban``", inline=False)
-            embed.add_field(name="📈 **Economy/Levels:**", value="``balance, buy, daily, fish, register, shop, stats``")
-            embed.add_field(name="💎 **Miscellaneous:**", value="``botstats, changelog, complementary, google, hex, help, invite, serverinfo, source, suggestion, uptime, userinfo, urban, wikipedia``", inline=False)
-            embed.set_footer(text="WalterClementsBot - by MrHouck#2775 | v1.8.4")
-            await ctx.send(embed=embed)
-        else:
-            embed=discord.Embed(title="Help", color=0x4966cb)
-            embed.add_field(name="🥳 **Fun:**", value="``8ball, achievement, bird, cat, catfact, chatbot, dog, dogfact, fbi, hug, koalafact, norris, panda, pandafact, randomname, sentence, space, uwu, walter``", inline=False)
-            embed.add_field(name="🛠️ **Moderation:**", value="``autorole[enable, disable, setrole], ban, clear, createrole, deleterole, lockdown[on, off], logs[enable(setting), disable(setting), setchannel, settings], mute, unban, unmute, role, softban``", inline=False)
-            embed.add_field(name="📈 **Economy/Levels:**", value="``balance, buy, daily, fish, register, shop, stats``")
-            embed.add_field(name="💎 **Miscellaneous:**", value="``botstats, changelog, complementary, google, hex, help, invite, serverinfo, source, suggestion, uptime, userinfo, wikipedia``", inline=False)
-            embed.set_footer(text="WalterClementsBot - by MrHouck#2775 | v1.8.4")
-            await ctx.send(embed=embed)
+        """
+        hmmm......
+        """
+        self.createJSON(self.bot.commands)
+        global commandcount 
+        commandcount = len(self.bot.commands)
+        menu = HelpMenu()
+        await menu.start(ctx)
+    
+
+
 
 def setup(client):
     client.add_cog(Help(client))

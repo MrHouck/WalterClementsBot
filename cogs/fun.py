@@ -5,12 +5,12 @@ from io import BytesIO
 from urllib.request import urlopen, Request
 from googletrans import Translator, LANGUAGES, LANGCODES
 import jackbox
-import time, json, random, sys, pyjokes, requests, os
+import time, json, random, sys, requests, os
 import re
 from datetime import datetime
-sys.path.append('/Users/MrHouck/Coding/WalterClementsBotTest/')
+sys.path.append('./')
 import words
-
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 jbclient = jackbox.Client()
 trans = Translator()
@@ -21,16 +21,21 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def walter(self, ctx):
+        """
+        walter.
+        """
         await ctx.trigger_typing()
-        await ctx.send("w̴̨̖̮̙̓͌ä̴̡̤̰̞ĺ̵̛̻̓͆ẗ̷̨͕̻̭͠͠ĕ̵̙̘̣ͅr̴̨̦͈̃")
+        await ctx.send("i like fire trucks and moster trucks")
 
     @commands.command()
     @commands.guild_only()
     async def fbi(self, ctx, *, message):
+        """
+        Create your own FBI meme!
+        """
         await ctx.trigger_typing()
         arguments = message.split('|')
-
-        image = Image.open('/Users/MrHouck/Coding/WalterClementsBotTest/cogs/blankfbitemplate.jpg')
+        image = Image.open(THIS_FOLDER + '/resources/blankfbitemplate.jpg')
         font_type = ImageFont.truetype('/Windows/Fonts/Arial.ttf', 35)
         draw = ImageDraw.Draw(image)
         draw.text(xy=(50, 155),text=arguments[0],fill=(0,0,0),font=font_type)
@@ -43,115 +48,59 @@ class Fun(commands.Cog):
 
     @commands.command(aliases=['ach'])
     @commands.guild_only()
-    async def achievement(self, ctx, *, message):
+    async def achievement(self, ctx, *, message=None):
+        """
+        Generate a minecraft achievement.
+        """
+        types = {
+                "grass":1,"diamond":2,"diamond+sword":3,"creeper":4,"pig":5,"tnt":6,"cookie":7,"heart":8,"bed":9,"cake":10,"sign":11,"rail":12,
+                "crafting+table":13,"redstone":14,"fire":15,"cobweb":16,"chest":17,"furnace":18,"book":19,"stone":20,"wooden+plank":21,"iron":22,
+                "gold":23,"wooden+door":24,"iron+door":25,"diamond+chestplate":26,"flint+and+steel":27,"potion":28,"splash+potion":29,"spawn+egg":30,
+                "coal":31,"iron+sword":32,"bow":33,"arrow":34,"iron+chestplate":35,"bucket":36,"water+bucket":37,"lava+bucket":38,"milk+bucket":39
+                }
         await ctx.trigger_typing()
         if message == 'list':
             embed = discord.Embed()
             embed.add_field(name="Blocks", value="stone, wooden plank, grass, furnace, chest, crafting table, bed, sign, wooden door, iron door, rail, tnt, cobweb", inline=False)
             embed.add_field(name="Items", value="coal, iron, gold, diamond, book, redstone, bow, arrow, iron sword, diamond sword, iron chestplate, diamond chestplate, flint and steel, fire, bucket, water bucket, lava bucket, milk bucket", inline=False)
             embed.add_field(name="Misc", value="cookie, cake, pig, creeper, spawn egg, potion, splash potion", inline=False)
-            await ctx.send(embed=embed)
-            return
+            return await ctx.send(embed=embed)
+        elif message is None:
+            return await ctx.send("`+achievement [[title] | [body] | [block]]`")
+
         info = message.replace(' ', '+')
         info = info.replace('+|+', '|')
         info = info.split('|')
-        if len(info) != 3:
-            await ctx.send('**Invalid use!** You forgot to add an achievement name!')
-        else:
-            msg = info[0]
-            block = info[1]
-            
-            #TODO: make this better
-            
-            if block == 'stone':
-                bNum = 20
-            elif 'grass' in block:
-                bNum = 1
-            elif 'wooden+plank' in block:
-                bNum = 21
-            elif 'crafting+table' in block:
-                bNum = 13
-            elif 'furnace' in block:
-                bNum = 18
-            elif 'chest' in block:
-                bNum = 17
-            elif 'bed' in block:
-                bNum = 9
-            elif block == 'coal':
-                bNum = 31
-            elif block == 'iron':
-                bNum = 22
-            elif block == 'gold':
-                bNum = 23
-            elif block == 'diamond':
-                bNum = 2
-            elif 'sign' in block:
-                bNum = 11
-            elif 'book' in block:
-                bNum = 19
-            elif 'wooden+door' in block:
-                bNum = 24
-            elif 'iron+door' in block:
-                bNum = 25
-            elif 'redstone' in block:
-                bNum = 14
-            elif 'rail' in block:
-                bNum = 12
-            elif 'bow' in block:
-                bNum = 33
-            elif 'arrow' in block:
-                bNum = 34
-            elif 'iron+sword' in block:
-                bNum = 32
-            elif 'diamond+sword' in block:
-                bNum = 3
-            elif block == 'iron+chestplate':
-                bNum = 35
-            elif block == 'diamond+chestplate':
-                bNum = 26
-            elif 'tnt' in block:
-                bNum = 6
-            elif block == 'flint+and+steel':
-                bNum = 27
-            elif block == 'fire':
-                bNum = 15
-            elif block == 'bucket':
-                bNum = 36
-            elif 'water+bucket' in block:
-                bNum = 37
-            elif 'lava+bucket' in block:
-                bNum = 38
-            elif 'cookie' in block:
-                bNum = 7
-            elif 'cake' in block:
-                bNum = 10
-            elif 'milk+bucket' in block:
-                bNum = 39
-            elif 'creeper' in block:
-                bNum = 4
-            elif 'pig' in block:
-                bNum = 5
-            elif 'spawn+egg' in block:
-                bNum = 30
-            elif 'heart' in block:
-                bNum = 8
-            elif 'cobweb' in block:
-                bNum = 16
-            elif block == 'potion':
-                bNum = 28
-            elif 'splash+potion' in block:
-                bNum = 29
-            else:
-                await ctx.send("Invalid item! Type **+achievement list** to get a list of acceptable items.")
-            embed = discord.Embed()
-            url = f'https://minecraftskinstealer.com/achievement/{bNum}/{name}%21/{msg}'
-            embed.set_image(url=url)
-            #embed.set_thumbnail(url=f'https://minecraftskinstealer.com/achievement/{bNum}/{name}%21/{msg}')
-            await ctx.send(embed=embed)
+        
+        title = info[0]
+        try:
+            body = info[1]
+        except IndexError:
+            body = "Hello%20there!"
+        try:
+            block = info[2]
+        except IndexError:
+            block = "grass"
+
+        body.replace(' ', '%20')
+        title.replace(' ', '%20')
+
+        if block not in types:
+            return await ctx.send("Invalid item! Type **+achievement list** to get a list of acceptable items.")
+
+        bNum = types[block]
+        embed = discord.Embed()
+        url = f'https://minecraftskinstealer.com/achievement/{bNum}/{title}/{body}'
+        embed.set_image(url=url)
+        #embed.set_thumbnail(url=f'https://minecraftskinstealer.com/achievement/{bNum}/{name}%21/{msg}')
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
     async def say(self, ctx, *, message):
+        """
+        Make me say something!
+        """
         msg = message
         msg = msg.replace('@', ' ')
         await ctx.channel.purge(limit=1)
@@ -160,6 +109,9 @@ class Fun(commands.Cog):
     @commands.command(aliases=['owo'])
     @commands.guild_only()
     async def uwu(self, ctx, *, message):
+        """
+        Make uw mehssage a wittwe mowe uwu.
+        """
         await ctx.trigger_typing()
         faces = ['uwu', 'owo', ':3', '-3-', ';-;', '(づ｡◕‿‿◕｡)づ', '≧◡≦', '(o´ω｀o)', '(◡ w ◡)', '(˘ω˘)', '(ﾉ´ з `)ノ', '(//ω//)']
         output = message
@@ -184,6 +136,9 @@ class Fun(commands.Cog):
     @commands.command(aliases=['roast'])
     @commands.guild_only()
     async def roastme(self, ctx):
+        """
+        Roast yourself. (There will be repeated roasts)
+        """
         await ctx.trigger_typing()
         auth = ctx.author
         roasts = [
@@ -210,37 +165,34 @@ class Fun(commands.Cog):
         roast = random.choice(roasts)
         await ctx.send(f'{auth.mention}, {roast}')
 
-    @commands.command()
-    @commands.guild_only()
-    async def norris(self, ctx):
-        joke = pyjokes.get_joke(category='chuck')
-        await ctx.send(joke)
-
-    @commands.command(aliases=['cock', 'dick', 'schlong'])
-    @commands.guild_only()
-    async def penis(self, ctx, member : discord.Member=None):
-        member = ctx.author if not member else member
-        uid = member.id
-        if uid == 250067504641081355:
-            embed = discord.Embed(title="Oh shit, oh fuck! Your cock is huge! Your cock size:", color=member.color)
-            embed.add_field(name='```8==================================================================================================================================D```', value='\u200b')
-            return await ctx.send(embed=embed)
-        random.seed(uid)
-        randomNum = randint(1, 20)
-        the_string = "8"+("="*randomNum)+"D"
-        if randomNum >= 15:
-            theTitle = "Holy shit! Your penis is huge! Your cock size:"
-        elif randomNum < 5:
-            theTitle = "Damn, you have a small penis. Your cock size:"
-        else:
-            theTitle = "Your cock size:"
-        embed = discord.Embed(title=theTitle, color=member.color)
-        embed.add_field(name='\u200b', value=f'```{the_string}```')
-        await ctx.send(embed=embed)
+  #  @commands.command()
+  #  @commands.guild_only()
+  #  async def penis(self, ctx, member : discord.Member=None):
+  #      member = ctx.author if not member else member
+  #      uid = member.id
+  #      if uid == 250067504641081355:
+  #          embed = discord.Embed(title="Oh shit, oh fuck! Your cock is huge! Your cock size:", color=member.color)
+  #          embed.add_field(name='```8==================================================================================================================================D```', value='\u200b')
+  #          return await ctx.send(embed=embed)
+  #      random.seed(uid)
+  #      randomNum = randint(1, 20)
+  #      the_string = "8"+("="*randomNum)+"D"
+  #      if randomNum >= 15:
+  #          theTitle = "Holy shit! Your penis is huge! Your cock size:"
+  #      elif randomNum < 5:
+  #          theTitle = "Damn, you have a small penis. Your cock size:"
+  #      else:
+  #          theTitle = "Your cock size:"
+  #      embed = discord.Embed(title=theTitle, color=member.color)
+  #      embed.add_field(name='\u200b', value=f'```{the_string}```')
+  #      await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
-    async def retard(self, ctx, *, message):
+    async def nonsense(self, ctx, *, message):
+        """
+        Takes a message you enter and mushes it into nonsense.
+        """
         langs = ["af", "sq", "am", "ar", "hy", "az", "eu", "be", "bn", "bs", "bg", "ca", "ceb", "ny", "zh-CN", "zh-TW", "co", "hr", "cs", "da", "nl", "en", "eo", "et", "tl", "fi", "fr", "fy", "gl", "ka", "de", "el", "gu", "ht", "ha", "haw", "iw", "hi", "hmn", "hu", "is", "ig", "id", "ga", "it", "ja", "jw", "kn", "kk", "km", "ko", "ku", "ky", "lo", "la", "lv", "lt", "lb", "mk", "mg", "ms", "ml", "mt", "mi", "mr", "mn", "my", "ne", "no", "ps", "fa", "pl", "pt", "pa", "ro", "ru", "sm", "gd", "sr", "st", "sn", "sd", "si", "sk", "sl", "so", "es", "su", "sw", "sv", "tg", "ta", "te", "th", "tr", "uk", "ur", "uz", "vi", "cy", "xh", "yi", "yo", "zu", "fil", "hi"]
         await ctx.trigger_typing()
         msg = message
@@ -254,10 +206,10 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def sentence(self, ctx):
-        await ctx.trigger_typing()
         """
         Generate a completely random sentence.
         """
+        await ctx.trigger_typing()
         name = random.choice(words.names)
         name = name.capitalize()
         adjective = random.choice(words.adjectives)
@@ -269,11 +221,11 @@ class Fun(commands.Cog):
 
     @commands.command(aliases=['8ball'])
     @commands.guild_only()
-    async def _8ball(self, ctx, *, question):
-        await ctx.trigger_typing()
+    async def eightball(self, ctx, *, question):
         """
         Consult the magic 8 ball with your question.
         """
+        await ctx.trigger_typing()
         responses = [
                     "It is certain.",
                     "It is decidedly so.",
@@ -306,10 +258,10 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def randomname(self, ctx):
-        await ctx.trigger_typing()
         """
         Generate a completey random username.
         """
+        await ctx.trigger_typing()
         name = random.choice(words.names)
         name = name.capitalize()
         word2 = random.choice(words.nouns)
@@ -326,10 +278,10 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def translate(self, ctx, *, phrase):
+        """
+        Translate a phrase from any language into english. (Might not be 100% accurate)
+        """
         await ctx.trigger_typing()
-        """
-        Translate a phrase from any language into english. This uses google's translation API, so it might not be 100% accurate.
-        """
         phrase = phrase.replace('@', ' ')
         t = trans.translate(phrase)
         for i in range(0,len(words.langs)):
@@ -345,6 +297,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def space(self, ctx):
+        """
+        Get information about the ISS.
+        """
         url = "http://api.open-notify.org/astros.json"
         response = urlopen(url)
         result = json.loads(response.read())
@@ -371,6 +326,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def dog(self, ctx):
+        """
+        Get an image of a dog.
+        """
         embed = discord.Embed()
         embed.set_image(url="https://source.unsplash.com/collection/1250790/")
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -379,6 +337,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def cat(self, ctx):
+        """
+        Get an image of a cat.
+        """
         embed = discord.Embed()
         embed.set_image(url="https://source.unsplash.com/collection/139386/")
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
@@ -387,6 +348,9 @@ class Fun(commands.Cog):
     @commands.command(aliases=['birb'])
     @commands.guild_only()
     async def bird(self, ctx):
+        """
+        Get an image of a bird.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/img/birb'
         req = Request(url=reg_url, headers=headers) 
@@ -401,6 +365,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def panda(self, ctx):
+        """
+        Get an image of a panda.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/img/panda'
         req = Request(url=reg_url, headers=headers) 
@@ -415,6 +382,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def chatbot(self, ctx, *, message):
+        """
+        Chat with a chatbot.
+        """
         message = message.replace(' ', '_')
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = f'https://some-random-api.ml/chatbot?message={message}'
@@ -427,6 +397,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def hug(self, ctx):
+        """
+        Hug gif.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/animu/hug'
         req = Request(url=reg_url, headers=headers) 
@@ -441,6 +414,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def dogfact(self, ctx):
+        """
+        Get a random fact about a dog.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/dog'
         req = Request(url=reg_url, headers=headers) 
@@ -452,6 +428,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def catfact(self, ctx):
+        """
+        Get a random fact about a cat.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/cat'
         req = Request(url=reg_url, headers=headers) 
@@ -463,6 +442,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def koalafact(self, ctx):
+        """
+        Get a random fact about a koala.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/koala'
         req = Request(url=reg_url, headers=headers) 
@@ -474,6 +456,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def pandafact(self, ctx):
+        """
+        Get a random fact about a panda.
+        """
         headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
         reg_url = 'https://some-random-api.ml/facts/panda'
         req = Request(url=reg_url, headers=headers) 
@@ -485,6 +470,9 @@ class Fun(commands.Cog):
     @commands.command()
     @commands.guild_only()
     async def jackbox(self, ctx, channel : discord.TextChannel, code):
+        """
+        Host a jackbox game in a discord text channel with a specified code.
+        """
         try:
             connection = await jbclient.connect(code=code, name='Verifying...')
         except:
