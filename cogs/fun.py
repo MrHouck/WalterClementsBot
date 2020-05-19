@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 from io import BytesIO
 from urllib.request import urlopen, Request
 from googletrans import Translator, LANGUAGES, LANGCODES
 import jackbox
-import time, json, random, sys, requests, os
-import re
+import time, json, random, sys, requests, os, re, sqlite3, base64
 from datetime import datetime
 sys.path.append('./')
 import words
@@ -466,6 +465,91 @@ class Fun(commands.Cog):
         result = json.loads(response.read())
         fact = result["fact"]
         return await ctx.send(fact)
+
+    @commands.command(aliases=['pl'])
+    async def place(self, ctx, *args):
+        db = sqlite3.connect('main.sqlite')
+        cursor = db.cursor()
+        cursor.execute(f"SELECT base64string FROM places WHERE guild_id = {ctx.guild.id}")
+        response = cursor.fetchone()
+        if str(args) == "()":
+            if response is None:      
+                sql = ("INSERT INTO places(guild_id, base64string) VALUES(?, ?)")
+                with open(THIS_FOLDER + '/resources/placetemplate.png', 'rb') as f:
+                    data = f.read()
+                    base64string = base64.b64encode(data)
+                val = (ctx.guild.id, base64string)
+                cursor.execute(sql, val)
+                db.commit()
+                im = Image.open(BytesIO(base64.b64decode(base64string)))
+                buffer = BytesIO()
+                im.save(buffer, 'png')
+                buffer.seek(0)
+                await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
+                buffer.close()
+            else:
+                try:
+                    base64string = response[0].replace("b'", '').replace("'", '')
+                except:
+                    base64string = response[0]
+                im = Image.open(BytesIO(base64.b64decode(base64string)))
+                buffer = BytesIO()
+                im.save(buffer, 'png')
+                buffer.seek(0)
+                await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
+                buffer.close()
+        else:
+            try:
+                base64string = response[0].replace("b'", '').replace("'", '')
+            except:
+                base64string = response[0]
+            validColors = ["white", "black", "gray", "lightgray", "brown", "red", "orange", "yellow", "lime", "green", "lightblue", "blue", "purple", "magenta", "pink"]
+            validCoords = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6"]
+            #draw lmao
+            #x offset of +34
+            #y offset of -34
+            if len(args) > 2:
+                return await ctx.send("You supplied too many arguments! Do ``+place <coordinates> <color>``")
+            coordinates = args[0]
+            color = args[1]
+            if color not in validColors:
+                return await ctx.send(f"{ctx.author.mention}, invalid color! Please pick from `white, black, gray, lightgray, brown, red, orange, yellow, lime, green, lightblue, blue, purple, magenta, pink`")
+            if coordinates[:-1] not in validCoords or coordinates[1] not in validCoords:
+                return await ctx.send(f"{ctx.author.mention}, invalid position! Coordinates look like this: `d6` or `ac`")
+            #convert coords to x and y 
+            if coordinates[:-1].isalpha():
+                #letter, y
+                y = ord(coordinates[:-1]) - 96 #since we have offset of 34, norm would be 96
+            else:
+                #int, y
+                y = int(coordinates[:-1])
+            if coordinates[1].isalpha():
+                #letter, x
+                x = ord(coordinates[1]) - 96
+            else:
+                #int, x
+                x = int(coordinates[1])
+            x=x*32+2
+            y=y*32+2
+            #open image
+            image = Image.open(BytesIO(base64.b64decode(base64string)))
+            image = image.convert("RGBA")
+            pixelColor = ImageColor.getcolor(color, "RGBA")
+            for i in range(0, 32):
+                for j in range(0, 32):
+                    image.putpixel((x+j, y+i), pixelColor)
+            #save to buffer
+            buffer = BytesIO()
+            image.save(buffer, format='png')
+            base64string = base64.b64encode(buffer.getvalue())
+            sql =(f"UPDATE places SET base64string = ? WHERE guild_id = ?")
+            val = (str(base64string), ctx.guild.id)
+            cursor.execute(sql, val)
+            db.commit()
+            cursor.close()
+            db.close()
+            buffer.seek(0)
+            await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
 
     @commands.command()
     @commands.guild_only()

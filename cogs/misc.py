@@ -224,8 +224,7 @@ class Misc(commands.Cog):
         """
         await ctx.trigger_typing()
         embed = discord.Embed(title="Pong!", color=0xff8040)
-        embed.add_field(name="Client Latency:",
-                        value=f"{round(self.bot.latency * 1000)}ms", inline=False)
+        embed.add_field(name="Client Latency:", value=f"{round(self.bot.latency * 1000)}ms", inline=False)
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 

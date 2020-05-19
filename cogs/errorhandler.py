@@ -55,8 +55,11 @@ class CommandErrorHandler(commands.Cog):
             embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
         else:
-            await ctx.send(error)
-
+            try:
+                await ctx.send(f"{type(error)}: {error}")
+            except discord.errors.HTTPException:
+                print(error)
+                await ctx.send("Error was too big to send in discord, printed it on the console.")
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
