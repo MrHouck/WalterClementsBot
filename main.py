@@ -6,8 +6,6 @@ import logging
 
 client = commands.Bot(command_prefix=commands.when_mentioned_or('+'), case_insensitive=True)
 client.remove_command('help')
-#status = cycle(['walter', "i'm watching you...", 'sweeping up the dust', 'crunching some numbers...', '+help', 'sex penis!?!11/??', 'الله حمود', 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', 'allah', '+help'])
-status = cycle(['porn', 'hentai', 'for +help', 'you', 'hot secks', 'gay secks', 'lesbian secks', 'Nutshinou#3989'])
 
 logger = logging.getLogger('discord')
 logger.setLevel(logging.DEBUG)
@@ -125,9 +123,14 @@ async def on_message(message):
         except:
             pass
 
-@tasks.loop(seconds=10) 
+@tasks.loop(seconds=30) 
 async def change_status():
-    activity = discord.Activity(name=next(status), type=discord.ActivityType.watching)
+    for guild in client.guilds:
+        totalMembers += guild.member_count
+    if random.randint(1, 2) == 1:
+        activity = discord.Activity(name=f"{totalMembers} in {len(client.guild)} servers", type=discord.ActivityType.watching)
+    else:
+        activity = discord.Activity(name=f"for +help", type=discord.ActivityType.watching)
     await client.change_presence(activity=activity)
 
 for cog in os.listdir(".\\cogs"):
