@@ -1,4 +1,4 @@
-.json
-.log
-.sqlite
-__pycache__/
+*.json
+*.log
+*.sqlite
+*/__pycache__/*
