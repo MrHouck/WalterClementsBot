@@ -248,6 +248,7 @@ class Misc(commands.Cog):
         Get the invite link for the bot.
         """
         embed = discord.Embed(title='Invite me!',url="https://mrhouck.github.io/walter/")
+        embed.add_field(name="Join the support server", value="https://discord.gg/gP2AgXN")
         await ctx.send(embed=embed)
 
     @commands.command()
