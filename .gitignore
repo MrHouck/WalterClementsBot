@@ -1,3 +1,4 @@
 .json
 .log
 .sqlite
+__pycache__/
