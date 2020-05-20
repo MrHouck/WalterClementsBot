@@ -1,17 +1,19 @@
 import discord
-from io import BytesIO
 import wikipedia
 import PIL
-from PIL import Image
-from googlesearch import search
 import urbandict
-import urllib.request
 import time
 import json
-from datetime import datetime
+import os
 import random
+import urllib.request
+from io import BytesIO
+from PIL import Image
+from googlesearch import search
+from datetime import datetime
 from discord.ext import commands
 
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 class Misc(commands.Cog):
     def __init__(self, client):
@@ -106,16 +108,25 @@ class Misc(commands.Cog):
         return await ctx.send(embed=embed)
     @commands.command()
     @commands.guild_only()
-    async def changelog(self, ctx):
+    async def changelog(self, ctx, version="latest"):
         """
         View the changelog for the bot.
         """
         await ctx.trigger_typing()
-        embed = discord.Embed(title="v1.9.2", color=0xff80ff)
-        embed.add_field(name="Changes: ", value="You can now DM walter, and he'll respond!\n- Removed paragraph creator, underused. You can view the backups by visiting these links: https://ziad87.net/paragraph.txt https://ziad87.net/paragraph1.txt, https://ziad87.net/paragraph2.txt, https://ziad87.net/paragraph3.txt\n- Added Verification level, MFA level, amount of server boosters, large, emoji limit, bitrate limit, filesize limit, and icon url to +serverinfo\n- Completely overhauled +help, it's now much cooler and way more helpful. (Might be getting another overhaul here soon)\n- You can now be blacklisted from +suggestion if you spam it\n- Removed +penis\n- Made badges actually do stuff in the economy\n- Added a ⭐ badge to the economy\n- Fixed botstats displaying ping as a long decimal\n- Fixed +fbi giving an image not found error", inline=False)
-        embed.add_field(name="That's all for now!",value="If you have any ideas or suggestions, lemme know by using the +suggestion command or just dming me!", inline=False)
-        embed.set_footer(text="v1.9.2 (at this rate i'm just randomly picking numbers)")
+        with open(THIS_FOLDER+'/resources/changelog.json', 'r') as f:
+            data = json.load(f)
+            f.close()
+        if version not in data.keys():
+            return await ctx.send(f"There is no update with that version!")
+        embed = discord.Embed(title=f"Version {version} - {data[version]['date']}", color=0xff87f9)
+        text=""
+        for change in data[version]["changes"]:
+            text+=f"{change}\n"
+        embed.add_field(name="Changes:", value=text, inline=False)
+        embed.add_field(name="That's all for now!", value="If you have any ideas or suggestions, lemme know by using the +suggestion command or just dming me!", inline=False)
+        embed.set_footer(text=f"Version {version}")
         await ctx.send(embed=embed)
+            
 
     @commands.command(aliases=['hex'])
     @commands.guild_only()
@@ -195,8 +206,7 @@ class Misc(commands.Cog):
         await ctx.send("Searching...")
         await ctx.trigger_typing()
         for result in search(query, tld='com', lang='en', num=5, stop=5, pause=1):
-            embed.add_field(
-                name='\u200b', value=f'[{result}]({result})', inline=False)
+            embed.add_field(name='\u200b', value=f'[{result}]({result})', inline=False)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['urban', 'ud'])

@@ -1,14 +1,25 @@
 import discord
+import time
+import json
+import random
+import sys
+import requests
+import os
+import re
+import sqlite3
+import base64
+import jackbox
 from discord.ext import commands
-from PIL import Image, ImageDraw, ImageFont, ImageColor
+from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageChops, ImageOps
 from io import BytesIO
 from urllib.request import urlopen, Request
 from googletrans import Translator, LANGUAGES, LANGCODES
-import jackbox
-import time, json, random, sys, requests, os, re, sqlite3, base64
 from datetime import datetime
+
 sys.path.append('./')
+
 import words
+
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 jbclient = jackbox.Client()
@@ -19,12 +30,56 @@ class Fun(commands.Cog):
 
     @commands.command()
     @commands.guild_only()
-    async def walter(self, ctx):
+    async def walter(self, ctx, member: discord.Member = None):
         """
-        walter.
+        Generate a walter meme
         """
-        await ctx.trigger_typing()
-        await ctx.send("i like fire trucks and moster trucks")
+        if member is not None:
+            url = member.avatar_url
+            name = member.name
+        else:
+            url = ctx.author.avatar_url
+            name = ctx.author.name
+
+        #save the image into the buffer from the avatar url
+        buffer = BytesIO()
+        r = requests.get(url, allow_redirects=True)
+        buffer.write(r.content)
+        #open the image and resize
+        buffer.seek(0)
+        im = Image.open(buffer)
+        im = im.resize((41, 41))
+        #refresh buffer
+        buffer = BytesIO()
+        #create a circle mask
+        bigsize = (im.size[0] * 3, im.size[1] * 3)
+        mask = Image.new('L', bigsize, 0)
+        #create imagedraw object
+        draw = ImageDraw.Draw(mask)
+        #draw an ellipse
+        draw.ellipse((0, 0) + bigsize, fill=255)
+        #circle cut
+        mask = mask.resize(im.size, Image.ANTIALIAS)
+        im.putalpha(mask)
+        #fit image
+        output = ImageOps.fit(im, mask.size, centering=(0.5, 0.5))
+        output.putalpha(mask)
+        im = output
+        im = im.convert('RGBA')
+        #we now have the circle image to place onto the template
+        regular_font = ImageFont.truetype(THIS_FOLDER+'/resources/arial.ttf', 13)
+        bold_font = ImageFont.truetype(THIS_FOLDER+'/resources/Roboto-Medium.ttf', 14)
+        template = Image.open(THIS_FOLDER+'/resources/walterTemplate.png').convert('RGBA')
+        #third param is alpha mask, makes it look actually ok
+        template.paste(im, (9, 14), im)
+        templateDraw = ImageDraw.Draw(template)
+        #place the text lol
+        templateDraw.text(xy=(61, 15), text=name, fill=(255,255,255), font=bold_font)
+        templateDraw.text(xy=(61+9*len(name), 15), text="1 second ago", fill=(170, 170, 170), font=regular_font)
+        templateDraw.text(xy=(61, 35), text=f"i like fire trucks and moster trucks \n\n\n{name}", fill=(255, 255, 255), font=regular_font)
+        template.save(buffer, 'png')
+        buffer.seek(0)
+        await ctx.send(file=discord.File(buffer, filename="hello.png"))
 
     @commands.command()
     @commands.guild_only()

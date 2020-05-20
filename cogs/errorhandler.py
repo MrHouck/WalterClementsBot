@@ -51,7 +51,7 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.send('I could not find that member. Please try again.')
         elif isinstance(error, commands.NotOwner):
             embed = discord.Embed(title="Error", color=0xff2d2d)
-            embed.add_field(name="Not Owner", value="You do not own this bot!", inline=False)
+            embed.add_field(name="FORBIDDEN", value="no.", inline=False)
             embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
         else:

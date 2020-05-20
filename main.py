@@ -69,13 +69,8 @@ async def unload(ctx, cog):
 
 @client.event
 async def on_ready():
-    print("#---------------------------#")
-    print("#                           #")
-    print("#         Logged in         #")
-    print("#    Walter_Clements_Bot    #")
-    print("#                           #")
-    print("#---------------------------#")
-
+    now = datetime.datetime.now()
+    print(f'{now} | Logged in.')
     change_status.start()
 
 
@@ -125,10 +120,11 @@ async def on_message(message):
 
 @tasks.loop(seconds=30) 
 async def change_status():
-    for guild in client.guilds:
-        totalMembers += guild.member_count
     if random.randint(1, 2) == 1:
-        activity = discord.Activity(name=f"{totalMembers} in {len(client.guild)} servers", type=discord.ActivityType.watching)
+        totalMembers = 0
+        for guild in client.guilds:
+            totalMembers += guild.member_count
+        activity = discord.Activity(name=f"{totalMembers} users in {len(client.guilds)} servers", type=discord.ActivityType.watching)
     else:
         activity = discord.Activity(name=f"for +help", type=discord.ActivityType.watching)
     await client.change_presence(activity=activity)

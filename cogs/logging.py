@@ -450,4 +450,4 @@ class Logs(commands.Cog):
 def setup(client):
     client.add_cog(Logs(client))
     now = datetime.now()
-    print(f'{now} | Loaded logs module.')
+    print(f'{now} | Loaded logging module.')
