@@ -1,4 +1,5 @@
-*.json
+config.json
 *.log
 *.sqlite
+*.pyc
 */__pycache__/*
