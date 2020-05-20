@@ -4,7 +4,7 @@ from discord.utils import *
 from itertools import cycle
 import logging
 
-client = commands.Bot(command_prefix=commands.when_mentioned_or('+'), case_insensitive=True)
+client = commands.Bot(command_prefix='+', case_insensitive=True)
 client.remove_command('help')
 
 logger = logging.getLogger('discord')
@@ -81,36 +81,30 @@ async def on_ready():
 @client.event
 async def on_message(message):
     if message.guild is None:
-        responses = ['Hey there.', 'bruh',
-                    'walter', 'i will eat you', 
-                    'Leave me alone', 'Nothing to see here...', 
-                    'Go away', 'Haha yeah', 
-                    'oof', 'Should I know you?', 
-                    'affirmative', 'where am i', 
-                    'hope you\'re having a nice day', 'never dm me again',
-                    'how are you', 'NO',
-                    'i literally could not care less', 'don\'t remember asking',
-                    'i would have to go with yes', 'am confused',
-                    'why are you talking to a robot', 'i don\'t care',
-                    'sure', 'dms are closed go home',
-                    'bup', 'what do you think',
-                    'trust no one', 'of course',
-                    'don\'t you have something better to do?', '?',
-                    'no u', 'no can do',
-                    'psssst... i\'m not a real person', 'go clean your room',
-                    'wee snaw', '*cries*',
+        responses = ['Hey there.', 'bruh','walter', 'i will eat you', 
+                    'Leave me alone', 'Nothing to see here...', 'Go away', 'Haha yeah', 
+                    'oof', 'Should I know you?', 'affirmative', 'where am i', 
+                    'hope you\'re having a nice day', 'never dm me again', 'how are you', 'NO',
+                    'i literally could not care less', 'don\'t remember asking', 'i would have to go with yes', 'am confused',
+                    'why are you talking to a robot', 'i don\'t care', 'sure', 'dms are closed go home',
+                    'bup', 'what do you think', 'trust no one', 'of course',
+                    'don\'t you have something better to do?', '?', 'no u', 'no can do',
+                    'psssst... i\'m not a real person', 'go clean your room', 'wee snaw', '*cries*',
                     'owo', 'I\'m sorry, but you do not have permission to perform this command. Please contact the server administrators if you think this is an error.',
-                    'how are you not in school?', 'fantastic',
-                    'who put you on the planet', 'get a life',
-                    'do you are have stupid', 'despacito',
-                    'if you say so', 'don\'t think so',
-                    'hope you\'re having a nice day', 'QUIET DOWN I\'M PLAYING FORTNITE',
-                    'take care!', 'you can go now',
-                    'pizza time', 'quit horsing around!',
-                    'huh?', 'shut up',
-                    'amazing', 'yo',
-                    'aaaaaaa', 'ok',
-                    'loser']
+                    'how are you not in school?', 'fantastic', 'who put you on the planet', 'get a life',
+                    'do you are have stupid', 'despacito', 'if you say so', 'don\'t think so',
+                    'hope you\'re having a nice day', 'QUIET DOWN I\'M PLAYING FORTNITE', 'take care!', 'you can go now',
+                    'pizza time', 'quit horsing around!', 'huh?', 'shut up',
+                    'amazing', 'yo', 'aaaaaaa', 'ok',
+                    'loser', 'that would be a solid nope', 'ngl, kinda hot', 'why are you like this',
+                    'stfu', 'please stop talking', 'begone', 'i hate you',
+                    'just go', 'hey check out the new website', 'what year is it', 'hey add me to your server',
+                    'what do you think of cats', 'uhhhhhhhhh', 'i\'m calling the FBI', 'yes officer, this man right here',
+                    'FBI OPEN UP', 'eW91IGhhdmUgbm8gbGlmZQ==', '...', 'lol',
+                    'yeah', 'oh', 'RIP +penis', 'that is mildly wack', 
+                    'wack', 'uwu', 'thank you for hosting the bot ziad', 'same',
+                    'thanks', 'can\'t relate', 'dude are you serious just LEAVE', 'do you know how long it took to write these responses',
+                    'yea yea yea i\'m trying to fix stuff', 'leave me alone', 'what did the cat say to the dog\nmeow' ]
         await message.author.send(random.choice(responses))
     else:
         try:

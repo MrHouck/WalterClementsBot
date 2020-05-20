@@ -121,7 +121,7 @@
         },
         "eval_fn": {
             "name": "eval_fn",
-            "help": "Evaluates input.\nInput is interpreted as newline seperated statements.\nIf the last statement is an expression, that is the return value.\nUsable globals:\n- `bot`: the bot instance\n- `discord`: the discord module\n- `commands`: the discord.ext.commands module\n- `ctx`: the invokation context\n- `__import__`: the builtin `__import__` function\nSuch that `>eval 1 + 1` gives `2` as the result.\nThe following invokation will cause the bot to send the text '9'\nto the channel of invokation and return '3' as the result of evaluating\n>eval ```\na = 1 + 2\nb = a * 2\nawait ctx.send(a + b)\na\n```",
+            "help": "Evaluates input. ",
             "usage": "<cmd>",
             "aliases": [
                 "eval"

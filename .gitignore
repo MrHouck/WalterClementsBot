@@ -1,6 +1,5 @@
 config.json
 *.log
-*.sqlite
 *.pyc
 */__pycache__/*
 */.vscode/*

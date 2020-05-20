@@ -142,7 +142,7 @@
             "- Fixed +fbi giving an image not found error"
         ]
     },
-    "latest":
+    "6":
     {
         "date":"5/20/20",
         "changes":[
@@ -161,6 +161,24 @@
             "- Added an eval command",
             "- Created a support server, https://discord.gg/gP2AgXN",
             "- Created a website for the bot, https://mrhouck.github.io/walter/"
+        ]
+    },
+    "latest":
+    {
+        "date":"5/20/20",
+        "changes":[
+            "- Basically all economy stuff btw",
+            "- Added ``+baltop``, shows top 20 users and where you stand.",
+            "- COMPLETELY rewrote the economy, it works a *whole* lot different",
+            "- Economy stats are now global, not server-based (only register once your entire life)",
+            "- Fixed ``+daily``, also it now only gives $250",
+            "- Everyone's badges got cleared - sorry :(",
+            "- Badges are now __items__, and there are 24",
+            "- ``+shop`` looks pretty sick now",
+            "- Added more responses to the DM autoresponder",
+            "- Fixed logging erroring when a channel was created oops",
+            "- OK OK OK I PROMISE THIS IS THE LAST UPDATE THIS WEEK",
+            "- Gonna start doing weekly updates starting this Sunday"
         ]
     }
 }

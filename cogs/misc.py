@@ -28,8 +28,7 @@ class Misc(commands.Cog):
         await ctx.trigger_typing()
         member = member if not None else ctx.author
         roles = [role for role in member.roles]
-        embed = discord.Embed(colour=member.color,
-                              timestamp=ctx.message.created_at)
+        embed = discord.Embed(colour=member.color, timestamp=ctx.message.created_at)
         embed.set_author(name=f"User info - {member}")
         embed.set_thumbnail(url=member.avatar_url)
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)

@@ -440,9 +440,10 @@ class Logs(commands.Cog):
             return
         channelid = result[0]
         channel1 = self.bot.get_channel(int(channelid))
-        if channel.Connectable:
-            t = "Voice"
-        else:
+        try:
+            if channel.Connectable:
+                t = "Voice"
+        except:
             t = "Text"
         await channel1.send(f"`[({current_time})]` - **Channel Deleted**\n```Channel: {channel.name} (ID: {channel.id})\nType: {t}\nPosition: {channel.position}\nCategory: {channel.category}```")
         
