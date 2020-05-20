@@ -1,0 +1,166 @@
+{
+    "1":
+    {
+        "date":"1/27/20",
+        "changes":[
+            "- Released bot"
+        ]
+    },
+    "1.1":
+    {
+        "date":"2/02/20",
+        "changes":[
+            "- Moved everything to cogs.",
+            "- Added ``+createrole, +deleterole, +serverinfo, +mute, +unmute, +unload, +reload, +load``",
+            "- Of course, the website was reworked.",
+            "- And OH BOY have embeds been added! Everything looks much cleaner now."
+        ]   
+    },
+    "1.2":
+    {
+        "date":"2/11/20",
+        "changes":[
+            "- Multiple new commands have been added to the bot, including ones such as ``+usage, +role, +softban, +fbi, +achievement, +say``, and more!",
+            "- Some commands have been removed due to them not functioning as intended, and causing bugs. These commands are ``+kick`` and ``+prefix``. ``+kick`` will be worked on more in the future but as of now I have no intentions of remaking ``+prefix``",
+            "- The website is now irrelevant, I'm not updating it anymore.",
+            "- The words list has been updated so some verbs aren't pluralized incorrectly (not all)",
+            "- Fixed an issue where it was possible to tag @ everyone and @ here.",
+            "- If the muted role is not setup in your server, the bot will now automatically configure it. However, you may have to rearrange the muted role to make sure it takes priority over other roles."
+        ]
+    },
+    "2":
+    {
+        "date":"2/16/20",
+        "changes":[
+            "- Many new commands, such as ``+uwu, +enable, +disable, +stats`` and more! Use ``+help`` for the complete list of commands.",
+            "- Fixed ``+kick`` and ``+suggestion``. Sorry for the inconvenience.",
+            "- Removed ``+invite``",
+            "- Added an economy system, the new commands can be found under +help",
+            "-In addition, a leveling system has been added. I'm planning to add a leaderboard soon.",
+            "- Reaction roles *kind of* work.",
+            "- Fixed another issue where you could tag ``@everyone`` and ``@here``",
+            "- More grammar fixes in the list of words used for the random sentence generator.",
+            "- ``+help`` is no longer sent in a DM",
+            "- Support server was deleted."
+        ]
+    },
+    "2.1":
+    {
+        "date":"2/22/20",
+        "changes":[
+            "- Added commands ``+hex, +complementary, +norris, +rank, +roast, +penis``",
+            "- Moved the level database over to an SQLite database. PLEASE NOTE: Everyones EXP got reset, but you still have the same level.",
+            "- Made +help its own module so it can be updated.",
+            "- Added some owner-only economy commands.",
+            "- Fixed a ton of issues with the economy system."
+        ]
+    },
+    "2.2":
+    {
+        "date":"2/27/20",
+        "changes":[
+            "- Moved economy over to an SQLite database",
+            "- Added stocks, duh. Honestly, it's kinda jacked right now.",
+            "- Removed owner-only economy commands.",
+            "- Removed +balance, you can now view everything you need using +stats (including stock shares).",
+            "- Various bug fixes in the economy system and some things in the main.",
+            "- Removed Herobrine."
+        ]
+    },
+    "3":
+    {
+        "date":"3/06/20",
+        "changes":[
+            "- Added commands ``+logs [enable|disable|setchannel], +autorole[disable|enable|setrole], +retard, +google, +wikipedia, +urban``",
+            "- Attempted to implement some updates for stocks, but holy shit the code burns my eyes",
+            "- Made a error handling module which will optimize handling errors.",
+            "- Made some stuff more database friendly so I can make the bot public again."
+        ]
+    },
+    "3.1":
+    {
+        "date":"3/07/20",
+        "changes":[
+            "- No new commands",
+            "- Fixed an issue where literally anyone could take the bot offline",
+            "- You can now DM the bot and it responds :D",
+            "- More database friendly stuff",
+            "- Added logging for mutes and bans",
+            "- Added some more error responses",
+            "- Moved some commands from the main file for better optimization",
+            "- Can no longer issue commands in DMs",
+            "- Commands are no longer case-sensitive, for example, doing +hELP will work."
+        ]
+    },
+    "4":
+    {
+        "date":"3/08/20",
+        "changes":[
+            "There are a myriad of new commands, including: ``+space, +dog, +cat, +bird, +panda, +hug, +koalafact, +pandafact, +dogfact, +catfact, +chatbot, +invite, +source, and +lockdown``",
+            "- Removed DM autoresponder, screwed everything up.",
+            "- :tada: **THE BOT IS PUBLIC AGAIN** :tada: (can't wait to see how fast this breaks)",
+            "- Mods, you can now lockdown your servers to prevent raids.",
+            "- The stock market system and leveling system have been removed :pensive:",
+            "- Would definitely recommend using +space, epic command",
+            "- Autorole works(?) now",
+            "- Updated the help command because it was missing quite a few commands.",
+            "- Don't worry, the DM autoresponder will be coming back. I think. (Spoiler Alert: it did)"
+        ]
+    },
+    "4.1":
+    {
+        "date":"3/08/20",
+        "changes":[
+            "- Changed the way +logs enable and disable work, added +logs settings",
+            "- You can now customize what you want to be logged! Check out +logs settings to see what's enabled for your server!",
+            "- To disable/enable settings, use +logs enable/disable (setting)",
+            "- Fixed an issue with mute logging, the user would not be muted if logging wasn't enabled.",
+            "- Probably some other stuff I don't remember (imagine writing down what you changed lole)"
+        ]
+    },
+    "4.2":
+    {
+        "date":"3/09/20",
+        "changes":[
+            "Added +uptime and +botstats",
+            "- otherwise, just added some bot stats, was bored and out of ideas so yeah-- PLEASE GIVE SUGGESTIONS"
+        ]
+    },
+    "5":
+    {
+        "date":"5/18/20",
+        "changes":[
+            "- You can now DM walter, and he'll respond!",
+            "- Removed paragraph creator, underused. You can view the backups by visiting these links: https://ziad87.net/paragraph.txt https://ziad87.net/paragraph1.txt, https://ziad87.net/paragraph2.txt, https://ziad87.net/paragraph3.txt",
+            "- Added Verification level, MFA level, amount of server boosters, large, emoji limit, bitrate limit, filesize limit, and icon url to +serverinfo",
+            "- Completely overhauled +help, it's now much cooler and way more helpful. (Might be getting another overhaul here soon)",
+            "- You can now be blacklisted from +suggestion if you spam it",
+            "- Removed +penis",
+            "- Made badges actually do stuff in the economy",
+            "- Added a :star: badge to the economy",
+            "- Fixed botstats displaying ping as a long decimal",
+            "- Fixed +fbi giving an image not found error"
+        ]
+    },
+    "latest":
+    {
+        "date":"5/20/20",
+        "changes":[
+            "- Added ``+place``",
+            "- Changed how ``+walter`` works",
+            "- Reworked how ``+changelog`` works, it's all now stored in a COOL json",
+            "- Going off that, you can now view any version as long as you know the number",
+            "- Fixed terrible coding in the economy, daily works now.",
+            "- The money multiplier from badges now stack, but they are a lot more expensive",
+            "- ``+fish`` now has a cooldown of 20 seconds",
+            "- ``+stats`` now shows when you next get to retrieve your daily, and so does +daily if you already got it today",
+            "- Renamed ``+retard`` to ``+nonsense``",
+            "- Removed ``+norris`` and ``+lockdown``",
+            "- Changed the status back to normal",
+            "- Changed how my version numbering works",
+            "- Added an eval command",
+            "- Created a support server, https://discord.gg/gP2AgXN",
+            "- Created a website for the bot, https://mrhouck.github.io/walter/"
+        ]
+    }
+}
