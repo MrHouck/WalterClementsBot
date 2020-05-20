@@ -3,3 +3,4 @@ config.json
 *.sqlite
 *.pyc
 */__pycache__/*
+*/.vscode/*
