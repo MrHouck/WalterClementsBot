@@ -291,7 +291,7 @@ class Misc(commands.Cog):
                     result = cursor.fetchone()
                     for r in result:
                         msg += "\n{}".format(r)
-                return await ctx.author.send(f"```{msg}```")
+                return await ctx.send(f"```{msg}```")
             else:
                 return await ctx.send("done")
         except Exception as e:
