@@ -195,7 +195,7 @@ class Towers(commands.Cog):
         self.update_claim.start()
 
     
-    @tasks.loop(seconds=10)
+    @tasks.loop(hours=1)
     async def update_claim(self):
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
