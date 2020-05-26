@@ -295,7 +295,7 @@ class Misc(commands.Cog):
             else:
                 return await ctx.send("done")
         except Exception as e:
-            return await ctx.author.send(e)
+            return await ctx.send(e)
 def setup(client):
     client.add_cog(Misc(client))
     now = datetime.now()
