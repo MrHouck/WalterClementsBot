@@ -1,5 +1,5 @@
 # WalterClementsBot
-An multipurpose asynchronous discord bot made using the discord.py framework
+A multipurpose asynchronous discord bot made using the discord.py framework
 Featuring over 50 commands, this bot is sure to fit most, if not all, of your needs. 
 --------------
 
