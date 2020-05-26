@@ -293,6 +293,9 @@ class Misc(commands.Cog):
                         msg += "\n{}".format(r)
                 return await ctx.send(f"```{msg}```")
             else:
+                db.commit()
+                db.close()
+                cursor.close()
                 return await ctx.send("done")
         except Exception as e:
             return await ctx.send(e)

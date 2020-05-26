@@ -464,7 +464,7 @@ class Economy(commands.Cog):
             jackpot=False
             relevantSlots = []
             relevantSlots.extend([slotEmojis[3], slotEmojis[4], slotEmojis[5]])
-            multipliers = { 2: {"🍌":0,"🍒":2,"🍐":3,"🍈":3,"🍇":3,"🍊":3,"🍉":3,"💎":10,"🎰":50},
+            multipliers = { 2: {"🍌":0,"🍒":2,"🍐":3,"🍈":3,"🍇":3,"🍊":3,"🍉":3,"🔔": 1,"💎":10,"🎰":50},
                             3:{"🍌":1,"🍒":10,"🍐":10,"🍈":10,"🍇":10,"🍊":10,"🍉":10,"🔔":75,"💎":75,"🎰":200}}
             
             itemCount = relevantSlots.count(relevantSlots[0])
@@ -489,7 +489,7 @@ class Economy(commands.Cog):
                         jackpot = True
 
             sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
-            val = (balance, str(ctx.author.id))
+            val = (balance+value, str(ctx.author.id))
             db.commit()
             cursor.close()
             db.close()
