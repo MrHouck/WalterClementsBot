@@ -411,6 +411,8 @@ class Economy(commands.Cog):
         """
         Take your chances and win big money
         """
+        if money < 0:
+            return await ctx.send('no')
         db = sqlite3.connect("main.sqlite")
         cursor = db.cursor()
         cursor.execute(f"SELECT money FROM economy WHERE user_id = {ctx.author.id}")
