@@ -426,7 +426,7 @@ class Mod(commands.Cog):
     
     @autorole.command()
     @commands.guild_only()
-    @commands.has_permissions(manage_server=True)
+    @commands.has_permissions(manage_guild=True)
     async def enable(self, ctx):
         """
         Enable the autorole module.
