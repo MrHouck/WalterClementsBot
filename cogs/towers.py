@@ -139,7 +139,7 @@ class Towers(commands.Cog):
         result = cursor.fetchone()
         userBal = result[0]
         if userBal - price < 0:
-            return await ctx.send(f"{ctx.author.mention}, you can't afford this! You need another {price-userBal} coins!")
+            return await ctx.send(f"{ctx.author.mention}, you can't afford this! You need another {round(price-userBal, 2)} coins!")
 
         sql = (f"UPDATE economy SET money = ? WHERE user_id = ?")
         val = (userBal-price, ctx.author.id)
@@ -188,7 +188,7 @@ class Towers(commands.Cog):
             db.commit()
             cursor.close()
             db.close()
-            return await ctx.send(f'```Successfully claimed {toClaim} coins. Your balance is now {balance+toClaim}```')
+            return await ctx.send(f'```Successfully claimed {toClaim} coins. Your balance is now {round(balance+toClaim, 2)}```')
 
     @commands.Cog.listener()
     async def on_ready(self):
