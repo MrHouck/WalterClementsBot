@@ -12,7 +12,7 @@ commandcount = 0
 totalPages = 0
 
 def constructPage(index):
-    with open('pages.json', 'r') as f:
+    with open(THIS_FOLDER + '/resources/pages.json', 'r') as f:
         pages = json.load(f)
         f.close()
 
@@ -32,6 +32,7 @@ def constructPage(index):
         else:
             cmdHelp += f'\n`Usage: +{command} {pages[str(index)][command]["usage"]}`'
         embed.add_field(name=cmd, value=cmdHelp, inline=False)
+    embed.set_footer(text="Still need help? Join https://discord.gg/GdWwJpS")
     return embed
 
 class HelpMenu(menus.Menu):
@@ -70,7 +71,6 @@ class HelpMenu(menus.Menu):
         self.pageIndex = totalPages-1
         await self.message.edit(embed=constructPage(self.pageIndex))
 
-
 class Help(commands.Cog):
     def __init__(self, client):
         self.bot = client
@@ -105,7 +105,7 @@ class Help(commands.Cog):
                 j = 0
         global totalPages
         totalPages = len(pages)
-        with open('pages.json', 'w') as f:
+        with open(THIS_FOLDER + '/resources/pages.json', 'w') as f:
             json.dump(pages, f, indent=4)
 
     @commands.command()
@@ -118,9 +118,6 @@ class Help(commands.Cog):
         commandcount = len(self.bot.commands)
         menu = HelpMenu()
         await menu.start(ctx)
-    
-
-
 
 def setup(client):
     client.add_cog(Help(client))

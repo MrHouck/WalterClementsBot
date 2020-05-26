@@ -9,6 +9,8 @@ import re
 import sqlite3
 import base64
 import jackbox
+import praw
+import binascii
 from discord.ext import commands
 from PIL import Image, ImageDraw, ImageFont, ImageColor, ImageChops, ImageOps
 from io import BytesIO
@@ -21,12 +23,38 @@ sys.path.append('./')
 import words
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-
+with open(THIS_FOLDER+'/resources/config.json', 'r') as f:
+    client_data = json.load(f)
+    f.close()
+reddit = praw.Reddit(client_id = client_data['reddit_client_id'],
+                client_secret = client_data['reddit_bot_token'],
+                password= client_data['reddit_bot_password'],
+                user_agent= 'desktop:Walter_Clements_Bot:v1.0.0 (by /u/MrHouck)',
+                username = 'RandomImageFromSub')
 jbclient = jackbox.Client()
 trans = Translator()
 class Fun(commands.Cog):
     def __init__(self, client):
         self.bot = client
+
+
+    @commands.command(aliases=['reddit', 'subreddit', 'randompic', 'randomsubreddit', 'randomreddit'])
+    @commands.guild_only()
+    async def randomPicture(self, ctx, subreddit="youngpeopleyoutube"):
+        """
+        Get a random picture from a subreddit.
+        """
+        if 'r/' in subreddit:
+            subreddit.strip('r/')
+        subreddit = reddit.subreddit(subreddit)
+        posts = subreddit.new(limit=100)
+        random_post_number = random.randint(0, 100)
+        for i,post in enumerate(posts):
+            if i==random_post_number:
+                url = "https://reddit.com"+post.permalink
+                embed = discord.Embed(title=post.title, color=discord.Color.red(), url=url)
+                embed.set_image(url=post.url)
+        return await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
@@ -241,7 +269,7 @@ class Fun(commands.Cog):
   #      embed.add_field(name='\u200b', value=f'```{the_string}```')
   #      await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(aliases=['retard', 'non'])
     @commands.guild_only()
     async def nonsense(self, ctx, *, message):
         """
@@ -326,7 +354,6 @@ class Fun(commands.Cog):
         embed = discord.Embed()
         embed.add_field(name="Your randomly generated username is:", value=f"{name}{word1}{word2}{number}", inline=False)
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-        await ctx.author.edit(nick=f'{name}{word1}{word2}{number}')
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -347,6 +374,19 @@ class Fun(commands.Cog):
         embed.add_field(name=f"Detected Language: {t.src}", value=f"{t.origin} -> {t.text}", inline=False)
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
+
+    @commands.command(aliases=["memes", "dankmeme", "dankmemes"])
+    async def meme(self, ctx):
+        """
+        Get a random meme 
+        """
+        url = 'https://meme-api.herokuapp.com/gimme'
+        response = urlopen(url)
+        response = json.loads(response.read())
+        embed = discord.Embed(title=response["title"], url=response["postLink"])
+        embed.set_image(url=response["url"])
+        embed.set_footer(text=f"From r/{response['subreddit']}")
+        return await ctx.send(embed=embed)
 
     @commands.command()
     @commands.guild_only()
@@ -383,8 +423,14 @@ class Fun(commands.Cog):
         """
         Get an image of a dog.
         """
-        embed = discord.Embed()
-        embed.set_image(url="https://source.unsplash.com/collection/1250790/")
+        url = "https://api.thedogapi.com/v1/images/search"
+        response = urlopen(url)
+        result = json.loads(response.read())
+        actualData = result[0]
+        url = actualData["url"]
+        embed = discord.Embed(color=random.randint(1, 0xfffff))
+        
+        embed.set_image(url=url)
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
@@ -394,8 +440,14 @@ class Fun(commands.Cog):
         """
         Get an image of a cat.
         """
-        embed = discord.Embed()
-        embed.set_image(url="https://source.unsplash.com/collection/139386/")
+        url = "https://api.thecatapi.com/v1/images/search"
+        response = urlopen(url)
+        result = json.loads(response.read())
+        actualData = result[0]
+        url = actualData["url"]
+        embed = discord.Embed(color=random.randint(1, 0xfffff))
+        
+        embed.set_image(url=url)
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 

@@ -311,20 +311,15 @@ class Mod(commands.Cog):
     @commands.command(aliases=['addrole'])
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
-    async def createrole(self, ctx, rolename, color, hoist, mentionable, reason):
+    async def createrole(self, ctx, rolename="new role", color="#000000", hoist=False, mentionable=True, reason="None"):
         """
         Create a role.
         """
-        if reason is None:
-            reason = "None"
-        if rolename is None:
-            rolename = "new role"
-        if hoist is None:
-            hoist = False
-        if mentionable is None:
-            mentionable = True
-        if color is None:
-            color=discord.Color.default()
+        original = color
+        color = color.strip('#')
+        colorlen = len(color)
+        color = tuple(int(color[i:i+colorlen/3], 16) for i in range(0, colorlen, colorlen/3))
+        color = discord.Color.from_rgb(color)
         await ctx.trigger_typing()
         guild = ctx.guild
         await guild.create_role(name=rolename, colour=color, hoist=hoist, mentionable=mentionable, reason=reason)

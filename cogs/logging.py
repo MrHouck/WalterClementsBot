@@ -421,7 +421,7 @@ class Logs(commands.Cog):
             return
         channelid = result[0]
         channel1 = self.bot.get_channel(int(channelid))
-        if channel.Connectable:
+        if channel.type == discord.ChannelType.voice:
             t = "Voice"
         else:
             t = "Text"
@@ -429,7 +429,7 @@ class Logs(commands.Cog):
     
     @commands.Cog.listener()
     async def on_guild_channel_delete(self, channel):
-        guild_id = channel.guild.id
+        guild_id = channel.guild.idS
         now = datetime.now()
         current_time = now.strftime("%H:%M:%S")
         db = sqlite3.connect('main.sqlite')
@@ -440,10 +440,9 @@ class Logs(commands.Cog):
             return
         channelid = result[0]
         channel1 = self.bot.get_channel(int(channelid))
-        try:
-            if channel.Connectable:
-                t = "Voice"
-        except:
+        if channel.type == discord.ChannelType.voice:
+            t = "Voice"
+        else:
             t = "Text"
         await channel1.send(f"`[({current_time})]` - **Channel Deleted**\n```Channel: {channel.name} (ID: {channel.id})\nType: {t}\nPosition: {channel.position}\nCategory: {channel.category}```")
         

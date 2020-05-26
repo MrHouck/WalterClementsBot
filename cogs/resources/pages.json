@@ -13,6 +13,11 @@
             "help": "Base command for autorole.",
             "usage": ""
         },
+        "baltop": {
+            "name": "baltop",
+            "help": "Get a list of the people with the most money",
+            "usage": ""
+        },
         "ban": {
             "name": "ban",
             "help": "Ban a member.",
@@ -39,7 +44,7 @@
         "buy": {
             "name": "buy",
             "help": "Buy a badge from the shop (Must be registered)",
-            "usage": "<badge>"
+            "usage": "<item>"
         },
         "cat": {
             "name": "cat",
@@ -50,18 +55,23 @@
             "name": "catfact",
             "help": "Get a random fact about a cat.",
             "usage": ""
-        },
+        }
+    },
+    "1": {
         "changelog": {
             "name": "changelog",
             "help": "View the changelog for the bot.",
             "usage": "[version=latest]"
-        }
-    },
-    "1": {
+        },
         "chatbot": {
             "name": "chatbot",
             "help": "Chat with a chatbot.",
             "usage": "<message>"
+        },
+        "claim": {
+            "name": "claim",
+            "help": "Claim coins your tycoon has generated, if any",
+            "usage": ""
         },
         "clear": {
             "name": "clear",
@@ -79,7 +89,7 @@
         "createrole": {
             "name": "createrole",
             "help": "Create a role.",
-            "usage": "<rolename> <color> <hoist> <mentionable> <reason>",
+            "usage": "[rolename=new role] [color=#000000] [hoist=False] [mentionable=True] [reason=None]",
             "aliases": [
                 "addrole"
             ]
@@ -110,6 +120,16 @@
             "name": "dogfact",
             "help": "Get a random fact about a dog.",
             "usage": ""
+        }
+    },
+    "2": {
+        "economy": {
+            "name": "economy",
+            "help": "A short guide to the economy",
+            "usage": "",
+            "aliases": [
+                "eco"
+            ]
         },
         "eightball": {
             "name": "eightball",
@@ -126,9 +146,7 @@
             "aliases": [
                 "eval"
             ]
-        }
-    },
-    "2": {
+        },
         "fbi": {
             "name": "fbi",
             "help": "Create your own FBI meme!",
@@ -167,7 +185,9 @@
             "name": "jackbox",
             "help": "Host a jackbox game in a discord text channel with a specified code.",
             "usage": "<channel> <code>"
-        },
+        }
+    },
+    "3": {
         "kick": {
             "name": "kick",
             "help": "Kick a member.",
@@ -182,9 +202,7 @@
             "name": "load",
             "help": "Load a cog. (Bot owner only)",
             "usage": "<cog>"
-        }
-    },
-    "3": {
+        },
         "logout": {
             "name": "logout",
             "help": "Shut down the bot (Bot owner only).",
@@ -195,6 +213,16 @@
             "help": "Base command for the logging module.",
             "usage": ""
         },
+        "meme": {
+            "name": "meme",
+            "help": "Get a random meme ",
+            "usage": "",
+            "aliases": [
+                "memes",
+                "dankmeme",
+                "dankmemes"
+            ]
+        },
         "mute": {
             "name": "mute",
             "help": "Mute a user.",
@@ -203,7 +231,11 @@
         "nonsense": {
             "name": "nonsense",
             "help": "Takes a message you enter and mushes it into nonsense.",
-            "usage": "<message>"
+            "usage": "<message>",
+            "aliases": [
+                "retard",
+                "non"
+            ]
         },
         "panda": {
             "name": "panda",
@@ -214,7 +246,9 @@
             "name": "pandafact",
             "help": "Get a random fact about a panda.",
             "usage": ""
-        },
+        }
+    },
+    "4": {
         "ping": {
             "name": "ping",
             "help": "Gets the client latency. (The ping of the bot)",
@@ -228,6 +262,23 @@
                 "pl"
             ]
         },
+        "qrqwere": {
+            "name": "qrqwere",
+            "help": "Unlock the next building in Towers.",
+            "usage": "<rqewt>"
+        },
+        "randomPicture": {
+            "name": "randomPicture",
+            "help": "Get a random picture from a subreddit.",
+            "usage": "[subreddit=youngpeopleyoutube]",
+            "aliases": [
+                "reddit",
+                "subreddit",
+                "randompic",
+                "randomsubreddit",
+                "randomreddit"
+            ]
+        },
         "randomname": {
             "name": "randomname",
             "help": "Generate a completey random username.",
@@ -237,9 +288,7 @@
             "name": "register",
             "help": "Add yourself to the economy database.",
             "usage": ""
-        }
-    },
-    "4": {
+        },
         "reload": {
             "name": "reload",
             "help": "Reload a cog. (Bot owner only)",
@@ -262,7 +311,9 @@
             "name": "say",
             "help": "Make me say something!",
             "usage": "<message>"
-        },
+        }
+    },
+    "5": {
         "sentence": {
             "name": "sentence",
             "help": "Generate a completely random sentence.",
@@ -282,6 +333,14 @@
             "help": "Display the shop.",
             "usage": ""
         },
+        "slots": {
+            "name": "slots",
+            "help": "Take your chances and win big money",
+            "usage": "[money=1]",
+            "aliases": [
+                "slot"
+            ]
+        },
         "softban": {
             "name": "softban",
             "help": "Ban a user then instantly unban them. Equivalent to a kick, but removes all their messages.",
@@ -296,9 +355,12 @@
             "name": "space",
             "help": "Get information about the ISS.",
             "usage": ""
-        }
-    },
-    "5": {
+        },
+        "sql": {
+            "name": "sql",
+            "help": "Execute an sqlite3 command (bot owner only)",
+            "usage": "<toExecute>"
+        },
         "stats": {
             "name": "stats",
             "help": "Get economy statistics of yourself or another user. The user must be registered.",
@@ -312,6 +374,22 @@
             "name": "suggestion",
             "help": "Send me a suggestion for this bot! Please note: usernames are recorded, you will be blacklisted if you abuse this feature.",
             "usage": "<suggestion>"
+        }
+    },
+    "6": {
+        "tower": {
+            "name": "tower",
+            "help": "View your tower or someone elses.",
+            "usage": "[member]"
+        },
+        "towerinfo": {
+            "name": "towerinfo",
+            "help": "Information about the Towers update",
+            "usage": "",
+            "aliases": [
+                "towersinfo",
+                "tinfo"
+            ]
         },
         "translate": {
             "name": "translate",
@@ -365,7 +443,7 @@
             ]
         }
     },
-    "6": {
+    "7": {
         "visualizeHex": {
             "name": "visualizeHex",
             "help": "Get the color for a hex code.",

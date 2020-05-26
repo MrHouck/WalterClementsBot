@@ -1,8 +1,10 @@
 import traceback
 import sys
-from discord.ext import commands
+import os
 import discord
 import datetime
+from discord.ext import commands
+
 
 class CommandErrorHandler(commands.Cog):
     def __init__(self, client):
@@ -15,8 +17,7 @@ class CommandErrorHandler(commands.Cog):
         if hasattr(ctx.command, 'on_error'):
             return
 
-        ignored = (commands.UserInputError)
-
+        ignored = (commands.BadArgument)
         error = getattr(error, 'original', error)
 
         if isinstance(error, ignored):
@@ -49,6 +50,10 @@ class CommandErrorHandler(commands.Cog):
         elif isinstance(error, commands.BadArgument):
             if ctx.command.qualified_name == 'tag list':
                 return await ctx.send('I could not find that member. Please try again.')
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("You are missing 1 or more required arguments. Use +help to see the arguments for the commands.")
+        elif isinstance(error, commands.TooManyArguments):
+            await ctx.send("You supplied too many arguments for this command!")
         elif isinstance(error, commands.NotOwner):
             embed = discord.Embed(title="Error", color=0xff2d2d)
             embed.add_field(name="FORBIDDEN", value="no.", inline=False)
@@ -56,10 +61,12 @@ class CommandErrorHandler(commands.Cog):
             await ctx.send(embed=embed)
         else:
             try:
-                await ctx.send(f"{type(error)}: {error}")
+                await ctx.send("There was an uncategorized error and it has been sent to the developer.")
+                await self.bot.get_channel(713047567411445842).send(f"```=ERROR= \nCommand: {ctx.command}\nError: {type(error)}: {error}```")
+                
             except discord.errors.HTTPException:
                 print(error)
-                await ctx.send("Error was too big to send in discord, printed it on the console.")
+                await self.bot.get_channel(713047567411445842).send("Error was too big to send in discord, printed it on the console.")
         print('Ignoring exception in command {}:'.format(ctx.command), file=sys.stderr)
         traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 

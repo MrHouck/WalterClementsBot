@@ -6,13 +6,14 @@ import time
 import json
 import os
 import random
+import sqlite3
 import urllib.request
 from io import BytesIO
 from PIL import Image
 from googlesearch import search
 from datetime import datetime
 from discord.ext import commands
-
+from textwrap import wrap
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 class Misc(commands.Cog):
@@ -105,6 +106,7 @@ class Misc(commands.Cog):
             f.close()
         embed = discord.Embed(description=f"Permanently blacklisted {user.name}")
         return await ctx.send(embed=embed)
+    
     @commands.command()
     @commands.guild_only()
     async def changelog(self, ctx, version="latest"):
@@ -126,7 +128,6 @@ class Misc(commands.Cog):
         embed.set_footer(text=f"Version {version}")
         await ctx.send(embed=embed)
             
-
     @commands.command(aliases=['hex'])
     @commands.guild_only()
     async def visualizeHex(self, ctx, hexCode):
@@ -270,6 +271,31 @@ class Misc(commands.Cog):
         embed.set_footer(text="i know my code is terrible")
         await ctx.send(embed=embed)
 
+    @commands.command()
+    @commands.is_owner()
+    async def sql(self, ctx, *, toExecute):
+        """
+        Execute an sqlite3 command (bot owner only)
+        """
+        db = sqlite3.connect('main.sqlite')
+        cursor = db.cursor()
+        try:
+            cursor.execute(toExecute)
+            if 'SELECT' in toExecute:
+                msg = ""
+                if 'SELECT *' in toExecute:
+                    result = cursor.fetchall()
+                    for r in result:
+                        msg += "\n{}".format(r)
+                else:
+                    result = cursor.fetchone()
+                    for r in result:
+                        msg += "\n{}".format(r)
+                return await ctx.author.send(f"```{msg}```")
+            else:
+                return await ctx.send("done")
+        except Exception as e:
+            return await ctx.author.send(e)
 def setup(client):
     client.add_cog(Misc(client))
     now = datetime.now()

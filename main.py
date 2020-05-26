@@ -73,6 +73,17 @@ async def on_ready():
     print(f'{now} | Logged in.')
     change_status.start()
 
+@client.event
+async def on_guild_join(guild):
+    channel = client.get_channel(713047567411445842)
+    await channel.send(f"Joined {guild.name} (ID: {guild.id})\nHas {guild.member_count} members.")
+
+@client.event
+async def on_guild_leave(guild):
+    channel = client.get_channel(713047567411445842)
+    await channel.send(f"Removed from {guild.name} (ID: {guild.id})")
+
+
 
 #                               #
 #       DM Autorresponder       #
@@ -105,7 +116,10 @@ async def on_message(message):
                     'wack', 'uwu', 'thank you for hosting the bot ziad', 'same',
                     'thanks', 'can\'t relate', 'dude are you serious just LEAVE', 'do you know how long it took to write these responses',
                     'yea yea yea i\'m trying to fix stuff', 'leave me alone', 'what did the cat say to the dog\nmeow' ]
-        await message.author.send(random.choice(responses))
+        try:
+            await message.author.send(random.choice(responses))
+        except:
+            pass
     else:
         try:
             await client.process_commands(message)
@@ -123,7 +137,7 @@ async def change_status():
         activity = discord.Activity(name=f"for +help", type=discord.ActivityType.watching)
     await client.change_presence(activity=activity)
 
-for cog in os.listdir(".\\cogs"):
+for cog in os.listdir("./cogs"):
     if cog.endswith(".py"):
         try:
             cog = f"cogs.{cog.replace('.py', '')}"
@@ -132,8 +146,7 @@ for cog in os.listdir(".\\cogs"):
             print(f'{cog} cannot be loaded:')
             raise e
 
-
-with open("config.json", "r") as f:
+with open("./cogs/resources/config.json", "r") as f:
     config = json.load(f)
     f.close()
 
