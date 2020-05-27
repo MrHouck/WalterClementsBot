@@ -166,7 +166,7 @@ class Economy(commands.Cog):
             val = (ctx.author.id, 100, " ", str(today)) 
             cursor.execute(sql, val)
             db.commit() 
-            sql = ("INSERT INTO towers(user_id, toClaim, coinsPerHour, homes, groceryStores, restaurants, clothingStores, electronicsStores, factories, banks, spaceStations) VALUES(?, ?, ?, ?, ?)")
+            sql = ("INSERT INTO towers(user_id, toClaim, coinsPerHour, homes, groceryStores, restaurants, clothingStores, electronicsStores, factories, banks, spaceStations) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
             val = (ctx.author.id, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0)
             cursor.execute(sql, val)
             db.commit() 
