@@ -2,7 +2,20 @@ import ast
 import discord
 import datetime
 from discord.ext import commands
-
+import asyncio
+import traceback
+import inspect
+import textwrap
+import importlib
+from contextlib import redirect_stdout
+import io
+import os
+import re
+import sys
+import copy
+import time
+import subprocess
+from collections import Counter
 
 class Eval(commands.Cog):
 
@@ -10,58 +23,52 @@ class Eval(commands.Cog):
         self.bot = client
 
 
-    def insert_returns(self, body):
-        # insert return stmt if the last expression is a expression statement
-        if isinstance(body[-1], ast.Expr):
-            body[-1] = ast.Return(body[-1].value)
-            ast.fix_missing_locations(body[-1])
-
-        # for if statements, we insert returns into the body and the orelse
-        if isinstance(body[-1], ast.If):
-            self.insert_returns(body[-1].body)
-            self.insert_returns(body[-1].orelse)
-
-        # for with blocks, again we insert returns into the body
-        if isinstance(body[-1], ast.With):
-            self.insert_returns(body[-1].body)
-
-
-    @commands.command(aliases=['eval'], hidden=True)
-    @commands.is_owner()
-    async def eval_fn(self, ctx, *, cmd):
-        """Evaluates input. """
-        #globals
-        #bot - bot instance
-        #discord - discord module
-        #commands - the discord.ext.commands module
-        #ctx - the context
-        #__import__ - the builtin __import__ function 
-        fn_name = "_eval_expr"
-
-        cmd = cmd.strip("` ")
-
-        # add a layer of indentation
-        cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
-
-        # wrap in async def body
-        body = f"async def {fn_name}():\n{cmd}"
-
-        parsed = ast.parse(body)
-        body = parsed.body[0].body
-
-        self.insert_returns(body)
+    @commands.command(pass_context=True, hidden=True, name='eval')
+    async def _eval(self, ctx, *, body: str):
+        """Evaluates a code"""
 
         env = {
-            'bot': ctx.bot,
-            'discord': discord,
-            'commands': commands,
+            'bot': self.bot,
             'ctx': ctx,
-            '__import__': __import__
+            'channel': ctx.channel,
+            'author': ctx.author,
+            'guild': ctx.guild,
+            'message': ctx.message,
+            '_': self._last_result
         }
-        exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
-        result = (await eval(f"{fn_name}()", env))
-        await ctx.send(result)
+        env.update(globals())
+
+        body = self.cleanup_code(body)
+        stdout = io.StringIO()
+
+        to_compile = f'async def func():\n{textwrap.indent(body, "  ")}'
+
+        try:
+            exec(to_compile, env)
+        except Exception as e:
+            return await ctx.send(f'```py\n{e.__class__.__name__}: {e}\n```')
+
+        func = env['func']
+        try:
+            with redirect_stdout(stdout):
+                ret = await func()
+        except Exception as e:
+            value = stdout.getvalue()
+            await ctx.send(f'```py\n{value}{traceback.format_exc()}\n```')
+        else:
+            value = stdout.getvalue()
+            try:
+                await ctx.message.add_reaction('\u2705')
+            except:
+                pass
+
+            if ret is None:
+                if value:
+                    await ctx.send(f'```py\n{value}\n```')
+            else:
+                self._last_result = ret
+                await ctx.send(f'```py\n{value}{ret}\n```')
 
 def setup(client):
     client.add_cog(Eval(client))
