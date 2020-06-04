@@ -13,7 +13,7 @@ from discord.ext import menus
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 economyInfo = {
-            " 🍎":{"price":500,"multiplier":2},
+            " 🍎":{"price":2500,"multiplier":2},
             " 🌽":{"price":5000,"multiplier":2},
             " ⌚":{"price":10000,"multiplier":2},
             " 🍚":{"price":15000,"multiplier":2},
