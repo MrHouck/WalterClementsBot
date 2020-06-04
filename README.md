@@ -6,5 +6,6 @@ Functions of this bot include help with moderation, an interactive economy, ente
 
 Please note: Economy data is public, the balance leaderboard will display your username and indentifier to people outside your server. 
 
+Questions? Concerns? [Join the support server!](https://discord.gg/gP2AgXN)
 
 This bot was originally started back in January as a fun little project but has become so much more - it's a bot that can be used anywhere now. I have learned so, so much from creating this bot and it was how I discovered and learned python.
