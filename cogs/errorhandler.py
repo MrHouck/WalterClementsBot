@@ -27,14 +27,13 @@ class CommandErrorHandler(commands.Cog):
                 return await ctx.author.send(f'{ctx.command} cannot be used in direct messages.')
             except:
                 pass
+        elif isinstance(error, commands.BotMissingPermissions):
+            return await ctx.send("I'm missing permissions to do this!")
+        elif isinstance(error, discord.errors.Forbidden):
+            return await ctx.send("Uh oh, something went wrong. This is probably due to missing permissions or I'm trying to send a message that is too long.")
         elif isinstance(error, commands.CheckFailure):
             embed = discord.Embed(title="Error", color=0xff2d2d)
             embed.add_field(name="Missing permissions", value="You don't have the permissions to do this!", inline=False)
-            embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=embed)
-        elif isinstance(error, commands.CommandNotFound):
-            embed = discord.Embed(title="Error", color=0xff2d2d)
-            embed.add_field(name="Invalid Command", value="To get a list of commands, use +help", inline=False)
             embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.DisabledCommand):
