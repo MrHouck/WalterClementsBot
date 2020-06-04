@@ -222,7 +222,8 @@ class Misc(commands.Cog):
             term = term[0]
         else:
             query = query.replace('@', '')
-            term = urbanClient.define(query)
+            urlCompatible = query.replace(' ', '%20')
+            term = urbanClient.define(urlCompatible)
             term = term[0]
         embed = discord.Embed(title=f'{query}', url=term.permalink, color=random.randint(1, 0xffffff))
         embed.add_field(name='Word', value=term.word)
