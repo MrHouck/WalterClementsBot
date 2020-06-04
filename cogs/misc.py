@@ -1,13 +1,13 @@
 import discord
 import wikipedia
 import PIL
-import urbandict
 import time
 import json
 import os
 import random
 import sqlite3
 import urllib.request
+from .resources.UrbanPy.urbandictionary import UrbanDictionary #self made api wrapper :o
 from io import BytesIO
 from PIL import Image
 from googlesearch import search
@@ -20,7 +20,7 @@ class Misc(commands.Cog):
     def __init__(self, client):
         self.bot = client
 
-    @commands.command(aliases=['uinfo', 'whois'])
+    @commands.command(aliases=['uinfo', 'whois'], usage="[member]")
     @commands.guild_only()
     async def userinfo(self, ctx, member: discord.Member):
         """
@@ -70,7 +70,7 @@ class Misc(commands.Cog):
         embed.set_footer(text=f"Server ID: {guild.id} | {guild} was created at {guild.created_at.strftime('%a, %#d %B %Y, %I:%M %p UTC')}")
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(usage="<suggestion>")
     @commands.guild_only()
     async def suggestion(self, ctx, *, suggestion):
         """
@@ -91,7 +91,7 @@ class Misc(commands.Cog):
         embed.add_field(name="Thank you!", value="Your suggestion was sent successfully.", inline=True)
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def blacklistUser(self, ctx, user: discord.Member):
         """
@@ -107,7 +107,7 @@ class Misc(commands.Cog):
         embed = discord.Embed(description=f"Permanently blacklisted {user.name}")
         return await ctx.send(embed=embed)
     
-    @commands.command()
+    @commands.command(usage="[version]")
     @commands.guild_only()
     async def changelog(self, ctx, version="latest"):
         """
@@ -128,7 +128,7 @@ class Misc(commands.Cog):
         embed.set_footer(text=f"Version {version}")
         await ctx.send(embed=embed)
             
-    @commands.command(aliases=['hex'])
+    @commands.command(aliases=['hex'], usage="<hexCode>")
     @commands.guild_only()
     async def visualizeHex(self, ctx, hexCode):
         """
@@ -148,7 +148,7 @@ class Misc(commands.Cog):
         await ctx.send(f'``#{hexCode} - rgb{rgb}``')
         await ctx.send(file=discord.File(buffer, filename="color.png"))
 
-    @commands.command()
+    @commands.command(usage="<hexCode>")
     @commands.guild_only()
     async def complementary(self, ctx, hexCode):
         """
@@ -170,7 +170,7 @@ class Misc(commands.Cog):
         await ctx.send(f'``Complementary color to #{hexCode} is {rgb}``')
         await ctx.send(file=discord.File(buffer, filename='complementary.png'))
 
-    @commands.command(aliases=['wiki', 'article'])
+    @commands.command(aliases=['wiki', 'article'], usage="<searchterm>")
     @commands.guild_only()
     async def wikipedia(self, ctx, *, searchterm):
         """
@@ -194,7 +194,7 @@ class Misc(commands.Cog):
         embed.add_field(name='Summary', value=f"{summary}")
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['google', 'search'])
+    @commands.command(aliases=['google', 'search'], usage="<query>")
     @commands.guild_only()
     async def google_search(self, ctx, *, query):
         """
@@ -209,21 +209,26 @@ class Misc(commands.Cog):
             embed.add_field(name='\u200b', value=f'[{result}]({result})', inline=False)
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['urban', 'ud'])
+    @commands.command(aliases=['urban', 'ud'], usage="[query]")
     @commands.guild_only()
-    async def urbandictionary(self, ctx, *, query):
+    async def urbandictionary(self, ctx, *, query=None):
         """
         Search a word on urban dictionary
         """
-        query = query.replace('@', '')
-        url_search = query.replace(' ', '%20')
-        definition = urbandict.define(query)
-        embed = discord.Embed(
-            title=f'{query}', url=f'https://urbandictionary.com/define.php/term?={url_search}')
-        embed.add_field(name='Word', value=definition[0]['word'])
-        embed.add_field(name='Defintion', value=definition[0]['def'])
-        print(definition[0]['example'])
-        embed.add_field(name='Example', value=definition[0]['example'])
+        urbanClient = UrbanDictionary()
+        if query is None:
+            query = "Random Word"
+            term = urbanClient.define()
+            term = term[0]
+        else:
+            query = query.replace('@', '')
+            term = urbanClient.define(query)
+            term = term[0]
+        embed = discord.Embed(title=f'{query}', url=term.permalink, color=random.randint(1, 0xffffff))
+        embed.add_field(name='Word', value=term.word)
+        embed.add_field(name='Defintion', value=term.definition.replace('[','').replace(']',''), inline=False)
+        embed.add_field(name='Example', value=term.example.replace('[','').replace(']',''), inline=False)
+        embed.add_field(name='Thumbs Up | Thumbs Down', value=f'{term.thumbs_up} | {term.thumbs_down}', inline=False)
         await ctx.send(embed=embed)
 
     @commands.command()
@@ -238,7 +243,7 @@ class Misc(commands.Cog):
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(hidden=True)
     @commands.is_owner()
     @commands.guild_only()
     async def logout(self, ctx):
@@ -271,7 +276,7 @@ class Misc(commands.Cog):
         embed.set_footer(text="i know my code is terrible")
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(hidden=True, usage="<toExecute> (sql string)")
     @commands.is_owner()
     async def sql(self, ctx, *, toExecute):
         """

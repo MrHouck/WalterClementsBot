@@ -15,7 +15,37 @@ handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(me
 
 logger.addHandler(handler)
 
-@client.command()
+@client.group(invoke_without_subcommand=False, hidden=True)
+@commands.is_owner()
+async def cmd(ctx):
+    pass
+
+@cmd.command(usage="<command>")
+async def enable(ctx, command: str):
+    c = client.get_command(command)
+    if c is None:
+        return await ctx.send("Command not found.")
+    elif c.enabled is True:
+        return await ctx.send("Command is already enabled.")
+    else:
+        c.enabled = True
+        return await ctx.send(f"{command} is now enabled")
+
+@cmd.command(usage="<command>")
+async def disable(ctx, command: str):
+    c = client.get_command(command)
+    if c is None:
+        return await ctx.send("Command not found.")
+    elif c.enabled is False:
+        return await ctx.send("Command is already disabled.")
+    else:
+        c.enabled = False
+        return await ctx.send(f"{command} is now disabled")
+
+
+
+
+@client.command(usage="<cog>")
 @commands.is_owner()
 async def reload(ctx, cog):
     """Reload a cog. (Bot owner only)"""
@@ -33,7 +63,7 @@ async def reload(ctx, cog):
         print(f'The module {cog} could not be loaded.')
         raise e
 
-@client.command()
+@client.command(usage="<cog>")
 @commands.is_owner()
 async def load(ctx, cog):
     """Load a cog. (Bot owner only)"""
@@ -50,7 +80,7 @@ async def load(ctx, cog):
         print(f'The module {cog} could not be loaded.')
         raise e
 
-@client.command()
+@client.command(usage="<cog>")
 @commands.is_owner()
 async def unload(ctx, cog):
     """Unload a cog. (Bot owner only)"""

@@ -18,7 +18,7 @@ class Towers(commands.Cog):
                                   description="**Basic Info**:\n- Towers is part of the economy, buy buildings which make money without you having to do anything!\n- Towers is simple, just buy different levels of the tower, and watch as your money skyrockets!\n- You can buy up to 999 of each level of the tower.\n\n**Tower Subcommands**:\n``+tower help`` - this\n``+tower view [user]`` - view your tower, or someone elses\n``+tower buy`` - buy a shop to make you money\n``+tower claim`` - Claim coins earned by your tower.")
             return await ctx.send(embed=embed)
 
-    @tower.command()
+    @tower.command(usage="[member]")
     @commands.guild_only()
     async def view(self, ctx, member=None):
         """
@@ -85,7 +85,7 @@ class Towers(commands.Cog):
                 msg+="```"
             await ctx.send(msg)
     
-    @tower.command()
+    @tower.command(usage="<floor>")
     @commands.guild_only()
     async def buy(self, ctx, *, floor):
         """
@@ -155,9 +155,6 @@ class Towers(commands.Cog):
         cursor.close()
         db.close()
         return await ctx.send(f"```diff\n+ Succesfully purchased 1 {buildingName}\n- Deducted {price} coins from your account. You now have {userBal-price} coins.```")
-        
-
-
     
     @tower.command()
     @commands.guild_only()

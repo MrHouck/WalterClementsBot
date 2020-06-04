@@ -11,10 +11,10 @@ class Mod(commands.Cog):
     def __init__(self, client):
         self.bot = client
 
-    @commands.command()
+    @commands.command(usage="<member> [reason]")
     @commands.guild_only()
     @commands.has_permissions(kick_members=True)
-    async def kick(self, ctx, member: discord.Member, *, reason):
+    async def kick(self, ctx, member: discord.Member, *, reason=None):
         """
         Kick a member.
         """ 
@@ -24,7 +24,7 @@ class Mod(commands.Cog):
         await member.kick(reason=reason)
         await ctx.send(f'{member.mention} kicked by {ctx.author}. [{reason}]')
 
-    @commands.command()
+    @commands.command(usage="<member> [reason]")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def ban(self, ctx, member : discord.Member, *, reason=None):
@@ -57,7 +57,7 @@ class Mod(commands.Cog):
             message = f"[({current_time})] - **Member Banned**\n```User {member} (ID: {member.id})\nBanned by: {ctx.author} (ID: {ctx.author.id})\nReason: {reason}```"
             await channel.send(message)
 
-    @commands.command(aliases=['purge'])
+    @commands.command(aliases=['purge'], usage="<amount>")
     @commands.guild_only()
     @commands.has_permissions(manage_messages=True)
     async def clear(self, ctx, amount: int):
@@ -71,7 +71,7 @@ class Mod(commands.Cog):
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed, delete_after=5)
 
-    @commands.command()
+    @commands.command(usage="<member> <role>")
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
     async def role(self, ctx, member : discord.Member, *, role):
@@ -97,7 +97,7 @@ class Mod(commands.Cog):
                 await message.add_reaction(emoji)
                 await ctx.send(f"Added {role} to {member.mention}")
 
-    @commands.command()
+    @commands.command(usage="<member> [reason]")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def softban(self, ctx, member : discord.Member, *, reason=None):
@@ -112,7 +112,7 @@ class Mod(commands.Cog):
         await ctx.guild.unban(member)
         await ctx.send(f"Softbanned {member}.\nNote that this means they can rejoin.")
 
-    @commands.command()
+    @commands.command(usage="<member>")
     @commands.guild_only()
     @commands.has_permissions(ban_members=True)
     async def unban(self, ctx, *, member):
@@ -120,8 +120,12 @@ class Mod(commands.Cog):
         Unban someone who was banned.
         """
         await ctx.trigger_typing()
-        banned_users = await ctx.guild.bans()
-        member_name, member_discriminator = member.split('#')
+        if member is not discord.Member:
+            banned_users = await ctx.guild.bans()
+            member_name, member_discriminator = member.split('#')
+        else:
+            member_name = member.name
+            member_discriminator = member.discriminator
         for ban_entry in banned_users:
             user = ban_entry.user
             if (user.name, user.discriminator) == (member_name, member_discriminator):
@@ -146,7 +150,7 @@ class Mod(commands.Cog):
             message = f"[({current_time})] - **Member Unbanned**\n```User {member} (ID: {member.id})\nUnbanned by: {ctx.author} (ID: {ctx.author.id})```"
             await channel.send(message)
 
-    @commands.command()
+    @commands.command(usage="<member> <time> [reason]")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def mute(self, ctx, member : discord.Member, time, *, reason=None):
@@ -265,7 +269,7 @@ class Mod(commands.Cog):
             await member.add_roles(role)
 
 
-    @commands.command()
+    @commands.command(usage="<member> [reason]")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def unmute(self, ctx, member : discord.Member, *, reason=None):
@@ -308,7 +312,7 @@ class Mod(commands.Cog):
             embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
 
-    @commands.command(aliases=['addrole'])
+    @commands.command(aliases=['addrole'], usage="[rolename] [rolecolor] [hoist] [mentionable] [reason]")
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
     async def createrole(self, ctx, rolename="new role", color="#000000", hoist=False, mentionable=True, reason="None"):
@@ -329,7 +333,7 @@ class Mod(commands.Cog):
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['delrole', 'removerole'])
+    @commands.command(aliases=['delrole', 'removerole'], usage="<rolename> [reason]")
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
     async def deleterole(self, ctx, rolename=None, *, reason=None):

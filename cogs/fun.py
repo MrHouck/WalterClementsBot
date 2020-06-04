@@ -38,7 +38,7 @@ class Fun(commands.Cog):
         self.bot = client
 
 
-    @commands.command(aliases=['reddit', 'subreddit', 'randompic', 'randomsubreddit', 'randomreddit'])
+    @commands.command(aliases=['reddit', 'subreddit', 'randompic', 'randomsubreddit', 'randomreddit'], usage="[subreddit]")
     @commands.guild_only()
     async def randomPicture(self, ctx, subreddit="youngpeopleyoutube"):
         """
@@ -56,7 +56,7 @@ class Fun(commands.Cog):
                 embed.set_image(url=post.url)
         return await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(usage="[member]")
     @commands.guild_only()
     async def walter(self, ctx, member: discord.Member = None):
         """
@@ -109,7 +109,7 @@ class Fun(commands.Cog):
         buffer.seek(0)
         await ctx.send(file=discord.File(buffer, filename="hello.png"))
 
-    @commands.command()
+    @commands.command(usage="<message>")
     @commands.guild_only()
     async def fbi(self, ctx, *, message):
         """
@@ -128,7 +128,7 @@ class Fun(commands.Cog):
         buffer.seek(0)
         await ctx.send(file=discord.File(buffer, filename="fbi-command-result.png"))
 
-    @commands.command(aliases=['ach'])
+    @commands.command(aliases=['ach'], usage="[title] [text] [block]")
     @commands.guild_only()
     async def achievement(self, ctx, *, message=None):
         """
@@ -177,7 +177,7 @@ class Fun(commands.Cog):
         #embed.set_thumbnail(url=f'https://minecraftskinstealer.com/achievement/{bNum}/{name}%21/{msg}')
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(usage="<message>")
     @commands.guild_only()
     async def say(self, ctx, *, message):
         """
@@ -188,7 +188,7 @@ class Fun(commands.Cog):
         await ctx.channel.purge(limit=1)
         await ctx.send(msg)
 
-    @commands.command(aliases=['owo'])
+    @commands.command(aliases=['owo'], usage="<message>")
     @commands.guild_only()
     async def uwu(self, ctx, *, message):
         """
@@ -269,7 +269,7 @@ class Fun(commands.Cog):
   #      embed.add_field(name='\u200b', value=f'```{the_string}```')
   #      await ctx.send(embed=embed)
 
-    @commands.command(aliases=['retard', 'non'])
+    @commands.command(aliases=['retard', 'non'], usage="<message>")
     @commands.guild_only()
     async def nonsense(self, ctx, *, message):
         """
@@ -301,7 +301,7 @@ class Fun(commands.Cog):
         await ctx.send(f"{name} {verb}s the {adjective} {noun} {adverb}")
 
 
-    @commands.command(aliases=['8ball'])
+    @commands.command(aliases=['8ball'], usage="<question>")
     @commands.guild_only()
     async def eightball(self, ctx, *, question):
         """
@@ -356,7 +356,7 @@ class Fun(commands.Cog):
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(usage="<phrase>")
     @commands.guild_only()
     async def translate(self, ctx, *, phrase):
         """
@@ -485,7 +485,7 @@ class Fun(commands.Cog):
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
-    @commands.command()
+    @commands.command(usage="<message>")
     @commands.guild_only()
     async def chatbot(self, ctx, *, message):
         """
@@ -575,7 +575,7 @@ class Fun(commands.Cog):
 
     @commands.cooldown(1, 300, commands.BucketType.user)
     @commands.guild_only()
-    @commands.command(aliases=['pl'])
+    @commands.command(aliases=['pl'], usage="<row><column> <color>")
     async def place(self, ctx, *args):
         """
         A replica of r/place, on your server!
@@ -690,7 +690,7 @@ class Fun(commands.Cog):
         else:
             pass
 
-    @commands.command()
+    @commands.command(usage="<channel> <code>")
     @commands.guild_only()
     async def jackbox(self, ctx, channel : discord.TextChannel, code):
         """

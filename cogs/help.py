@@ -86,23 +86,30 @@ class Help(commands.Cog):
         sortedCommands.sort()        
         for command in sortedCommands:
             command = self.bot.get_command(command)
-            if j == 0:
-                pages[str(i)] = {}
-            pages[str(i)][command.name] = {}
-            pages[str(i)][command.name]["name"] = {}
-            pages[str(i)][command.name]["help"] = {}
-            pages[str(i)][command.name]["usage"] = {}
-            pages[str(i)][command.name]["name"] = command.name
-            commandHelp = command.help
-            pages[str(i)][command.name]["help"] = command.help
-            pages[str(i)][command.name]["usage"] = command.signature
-            if len(command.aliases) >= 1:
-                pages[str(i)][command.name]["aliases"] = []
-                pages[str(i)][command.name]["aliases"] = command.aliases
-            j += 1
-            if j >= 10:
-                i += 1
-                j = 0
+            if not command.hidden:
+                if j == 0:
+                    pages[str(i)] = {}
+                pages[str(i)][command.name] = {}
+                pages[str(i)][command.name]["name"] = {}
+                pages[str(i)][command.name]["help"] = {}
+                pages[str(i)][command.name]["usage"] = {}
+                pages[str(i)][command.name]["name"] = command.name
+                try:
+                    commandHelp = command.help
+                except:
+                    commandHelp = ""
+                pages[str(i)][command.name]["help"] = command.help
+                usage = "" if not command.usage else command.usage
+                pages[str(i)][command.name]["usage"] = usage
+                if len(command.aliases) >= 1:
+                    pages[str(i)][command.name]["aliases"] = []
+                    pages[str(i)][command.name]["aliases"] = command.aliases
+                j += 1
+                if j >= 10:
+                    i += 1
+                    j = 0
+            else:
+                pass
         global totalPages
         totalPages = len(pages)
         with open(THIS_FOLDER + '/resources/pages.json', 'w') as f:

@@ -26,7 +26,7 @@ class Eval(commands.Cog):
             self.insert_returns(body[-1].body)
 
 
-    @commands.command(aliases=['eval'])
+    @commands.command(aliases=['eval'], hidden=True)
     @commands.is_owner()
     async def eval_fn(self, ctx, *, cmd):
         """Evaluates input. """

@@ -198,5 +198,18 @@
             "\n- Fixed ``+dog`` and ``+cat``, they now show more than one image lol",
             "\n- You can now use ``+non`` and ``+retard`` as an alternative to ``+nonsense``"
             ]
+    },
+    "8.2":
+    {
+        "date":"6/4/20",
+        "changes":[
+            "- Hey everyone, would like to apologize for the lack of updates. Been really busy finishing up the school year and messing around with other things.",
+            "\n- But on a more positive note, we have some new stuff!",
+            "\n- Fixed ``+slots``, sorry, was a really dumb mistake ahah",
+            "\n- However, ``+slots`` is temporarily disabled while I balance the economy a bit more.",
+            "\n- The bot now shows you the usage of the command if you are missing arguments.",
+            "\n- Wrote usages for every command, now it should be less confusing.",
+            "\n- I wrote my own API Wrapper for urban dictionary, so ``+urban`` should be fixed now!"
+        ]
     }
 }

@@ -20,7 +20,7 @@ class Logs(commands.Cog):
         if ctx.invoked_subcommand == None:
             await ctx.send('You need to specify a subcommand! (enable[setting], disable[setting], setchannel, settings)')
     
-    @logs.command()
+    @logs.command(usage="<setting>")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def disable(self, ctx, *, setting):
@@ -122,7 +122,7 @@ class Logs(commands.Cog):
         else:
             await ctx.send(f"{ctx.author.mention}, that isn't a valid setting!")
 
-    @logs.command()
+    @logs.command(usage="<setting>")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def enable(self, ctx, *, setting):
@@ -225,7 +225,7 @@ class Logs(commands.Cog):
             await ctx.send(f"{ctx.author.mention}, that isn't a valid setting!")
 
 
-    @logs.command(aliases=['sc', 'set', 'channel', 'setup'])
+    @logs.command(aliases=['sc', 'set', 'channel', 'setup'], usage="[channel]")
     @commands.guild_only()
     @commands.has_permissions(administrator=True)
     async def setchannel(self, ctx, channel : discord.TextChannel=None):

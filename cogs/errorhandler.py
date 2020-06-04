@@ -39,7 +39,7 @@ class CommandErrorHandler(commands.Cog):
             await ctx.send(embed=embed)
         elif isinstance(error, commands.DisabledCommand):
             embed = discord.Embed(title="Error", color=0xff2d2d)
-            embed.add_field(name="Disabled Command", value="This command has been disabled by an administrator.", inline=False)
+            embed.add_field(name="Disabled Command", value="This command is temporarily disabled. If you have a question, [join the official server](https://discord.gg/GdWwJpS)", inline=False)
             embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
         elif isinstance(error, commands.CommandOnCooldown):
@@ -51,7 +51,8 @@ class CommandErrorHandler(commands.Cog):
             if ctx.command.qualified_name == 'tag list':
                 return await ctx.send('I could not find that member. Please try again.')
         elif isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send("You are missing 1 or more required arguments. Use +help to see the arguments for the commands.")
+            usage = "" if not ctx.command.usage else ctx.command.usage
+            await ctx.send(f"You are missing 1 or more required arguments. Usage for this command is ``+{ctx.command} {usage}``")
         elif isinstance(error, commands.TooManyArguments):
             await ctx.send("You supplied too many arguments for this command!")
         elif isinstance(error, commands.NotOwner):

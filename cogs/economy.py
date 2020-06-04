@@ -13,7 +13,7 @@ from discord.ext import menus
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 economyInfo = {
-            " 🍎":{"price":2500,"multiplier":2},
+            " 🍎":{"price":500,"multiplier":2},
             " 🌽":{"price":5000,"multiplier":2},
             " ⌚":{"price":10000,"multiplier":2},
             " 🍚":{"price":15000,"multiplier":2},
@@ -98,7 +98,7 @@ class Economy(commands.Cog):
         embed.add_field(name="Ways to make money", value="There are multiple ways to get money. The first method is using ``+fish``. By doing this you catch a fish with a random value within certain ranges, and it's automatically sold.\nThe second method is using ``+slots``. By default you only bet 1 coin, but you can specify any amount you want. The slot rolling is completely random, and you might lose your money, but if you win, you win big.\nThe third method is retrieving your daily allowance everyday.\nThe fourth and final method is using Towers, but you can get more info about that by using ``+towersinfo``", inline=False)
         embed.add_field(name="Items", value="The economy has a unique way of working. You can use ``+buy`` to buy items from the shop (view by using ``+shop``) which gives you a money multiplier. The cash multiplier only applies to fishing and your daily allowance.")
         return await ctx.send(embed=embed)
-    @commands.command(aliases=['bal', 'balance'])
+    @commands.command(aliases=['bal', 'balance'], usage="[member]")
     @commands.guild_only()
     async def stats(self, ctx, member : discord.Member=None):
         """
@@ -325,7 +325,7 @@ class Economy(commands.Cog):
         shop = ShopMenu()
         await shop.start(ctx)
 
-    @commands.command()
+    @commands.command(usage="<item>")
     @commands.guild_only()
     async def buy(self, ctx, item):
         """
@@ -404,7 +404,7 @@ class Economy(commands.Cog):
         embed = discord.Embed(color=0xffed9e, description=msg)
         await message.edit(embed=embed)
 
-    @commands.command(aliases=['slot'])
+    @commands.command(aliases=['slot'], usage="[money]")
     @commands.cooldown(1, 15, commands.BucketType.user)
     @commands.guild_only()
     async def slots(self, ctx, money=1):
@@ -428,13 +428,12 @@ class Economy(commands.Cog):
                 db.close()
                 cursor.close()
                 return await ctx.send(f"{ctx.author.mention}, you can't afford this!")
-            
+           
             #take the money
             sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
             val = (result[0]-money, ctx.author.id)
             cursor.execute(sql, val)
             db.commit() #save
-
             possibleEmojis = ['🍌','🍇','🍒','🔔','🍈','💎','🍉','🍊','🍐','🎰']
             message = await ctx.send("Rolling...")
             
@@ -447,7 +446,7 @@ class Economy(commands.Cog):
             
                 msg ="**[(  SLOTS  )]**\n-----------------\n"
                 k = 1
-            
+           
                 for emoji in slotEmojis:
                     msg += f"{emoji} : "
                     if k % 3 == 0:
@@ -466,8 +465,35 @@ class Economy(commands.Cog):
             jackpot=False
             relevantSlots = []
             relevantSlots.extend([slotEmojis[3], slotEmojis[4], slotEmojis[5]])
-            multipliers = { 2: {"🍌":0,"🍒":2,"🍐":3,"🍈":3,"🍇":3,"🍊":3,"🍉":3,"🔔": 1,"💎":10,"🎰":50},
-                            3:{"🍌":1,"🍒":10,"🍐":10,"🍈":10,"🍇":10,"🍊":10,"🍉":10,"🔔":75,"💎":75,"🎰":200}}
+            multipliers = {
+                2: 
+                {
+                    "🍌":0,
+                    "🍒":2,
+                    "🍐":3,
+                    "🍈":3,
+                    "🍇":3,
+                    "🍊":3,
+                    "🍉":3,
+                    "🔔": 1,
+                    "💎":10,
+                    "🎰":50
+                },
+                3:
+                {"🍌":1,
+                "🍒":10,
+                "🍐":10,
+                "🍈":10,
+                "🍇":10,
+                "🍊":10,
+                "🍉":10,
+                "🔔":75,
+                "💎":75,
+                "🎰":200
+                }
+            }
+
+
             
             itemCount = relevantSlots.count(relevantSlots[0])
             if itemCount == 1:
@@ -489,9 +515,9 @@ class Economy(commands.Cog):
                     value *= multipliers[itemCount][relevantSlots[1]]
                     if multipliers[itemCount][relevantSlots[1]] == 200:
                         jackpot = True
-
             sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
             val = (balance+value, str(ctx.author.id))
+            cursor.execute(sql, val)
             db.commit()
             cursor.close()
             db.close()
