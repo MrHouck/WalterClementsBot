@@ -290,7 +290,7 @@ class Misc(commands.Cog):
     @commands.command(aliases=['random', 'randint', 'randomnum'], usage="<lower> <upper>")
     async def rand(self, ctx, lower:int, upper:int):
         await ctx.trigger_typing()
-        if lower <= upper:
+        if lower > upper:
             return await ctx.send("The `lower` value cannot be higher than the `upper` value.")
         embed = discord.Embed(title='Random Number Generator', color=random.randint(1, 0xffffff))
         rand = random.randint(lower, upper)
