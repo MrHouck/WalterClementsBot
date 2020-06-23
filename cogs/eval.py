@@ -34,6 +34,7 @@ class Eval(commands.Cog):
 
 
     @commands.command(pass_context=True, hidden=True, name='eval')
+    @commands.is_owner()
     async def _eval(self, ctx, *, body: str):
         """Evaluates a code"""
 

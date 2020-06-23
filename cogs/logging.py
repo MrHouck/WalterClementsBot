@@ -3,8 +3,7 @@ from discord.ext import commands
 import discord.utils
 import sqlite3
 from datetime import datetime
-
-
+import random
 
 #external logging is in place for muting and banning
 class Logs(commands.Cog):
@@ -119,6 +118,12 @@ class Logs(commands.Cog):
             db.commit()
             cursor.close()
             db.close()
+        elif setting.lower() == "all" or settings.lower() == "everything":
+            cursor.execute(f"UPDATE logs SET bulkMessageDelete = 0, channelCreate = 0, channelDelete = 0, memberJoin =0, memberLeave = 0, messageDelete = 0, messageEdit = 0, memberMuted = 0, memberBanned = 0, roleDeleted=0, roleCreated=0 WHERE guild_id = {ctx.guild.id}")
+            db.commit()
+            cursor.close()
+            db.close()
+            await ctx.send("Logging ``everything`` is now enabled")
         else:
             await ctx.send(f"{ctx.author.mention}, that isn't a valid setting!")
 
@@ -221,6 +226,12 @@ class Logs(commands.Cog):
             db.commit()
             cursor.close()
             db.close()
+        elif setting.lower() == "all" or settings.lower() == "everything":
+            cursor.execute(f"UPDATE logs SET bulkMessageDelete = 1, channelCreate = 1, channelDelete = 1, memberJoin = 1, memberLeave = 1, messageDelete = 1, messageEdit = 1, memberMuted = 1, memberBanned = 1, roleDeleted=1, roleCreated=1 WHERE guild_id = {ctx.guild.id}")
+            db.commit()
+            cursor.close()
+            db.close()
+            await ctx.send("Logging ``everything`` is now enabled")
         else:
             await ctx.send(f"{ctx.author.mention}, that isn't a valid setting!")
 
@@ -239,13 +250,22 @@ class Logs(commands.Cog):
         cursor.execute(f"SELECT channel_id FROM logs WHERE guild_id = '{ctx.guild.id}'") 
         result = cursor.fetchone()
         if result is None:
-            sql = ("INSERT INTO logs(guild_id, channel_id, roleCreated, roleDeleted, memberBanned, memberMuted, messageEdit, messageDelete, memberLeave, memberJoin, channelDelete, channelCreate, bulkMessageDelete) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)")
-            val = (ctx.guild.id, channel.id, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+            try:
+                await channel.send("Logs are now being recorded in this channel!")
+            except discord.errors.Forbidden:
+                return await ctx.send("I don't have permission to talk in that channel!")            
+            sql = ("INSERT INTO logs(guild_id, channel_id, enabled, roleCreated, roleDeleted, memberBanned, memberMuted, messageEdit, messageDelete, memberLeave, memberJoin, channelDelete, channelCreate, bulkMessageDelete) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+            val = (ctx.guild.id, channel.id, 'true', 1,1,1,1,1,1,1,1,1,1,1)
             cursor.execute(sql, val)
             db.commit()
         elif result[0] == channel.id:
             return await ctx.send("Logs are already being written in this channel!")
-        cursor.execute(f"UPDATE logs SET channel_id = '{channel.id}' WHERE guild_id = '{ctx.guild.id}'")
+        else:
+            try:
+                await channel.send("Logs are now being recorded in this channel!")
+            except discord.errors.Forbidden:
+                return await ctx.send("I don't have permission to talk in that channel!")   
+            cursor.execute(f"UPDATE logs SET channel_id = '{channel.id}' WHERE guild_id = '{ctx.guild.id}'")
         db.commit()
         cursor.close()
         db.close()
@@ -260,11 +280,11 @@ class Logs(commands.Cog):
         """
         db = sqlite3.connect("main.sqlite")
         cursor = db.cursor()
-        emoji = ['🟥', '🟩']
+        emoji = ['❌', '✅']
         cursor.execute(f"SELECT roleCreated, roleDeleted, memberBanned, memberMuted, messageEdit, messageDelete, memberLeave, memberJoin, channelDelete, channelCreate, bulkMessageDelete FROM logs WHERE guild_id = '{ctx.guild.id}'")
         result = cursor.fetchone()
         if result is None:
-            return await ctx.send("Please set up logs first.")
+            return await ctx.send("You haven't set up logs yet! To get started, set the channel for logging to take place!")
         roleCreated = result[0]
         roleDeleted = result[1]
         memberBanned = result[2]
@@ -277,19 +297,9 @@ class Logs(commands.Cog):
         channelCreate = result[9]
         bulkMessageDelete = result[10]
         emojis = [emoji[roleCreated], emoji[roleDeleted], emoji[memberBanned], emoji[memberMuted], emoji[messageEdit], emoji[messageDelete], emoji[memberLeave], emoji[memberJoin], emoji[channelDelete], emoji[channelCreate], emoji[bulkMessageDelete]]
-        embed = discord.Embed()
-        embed.set_author(name=f"Logging settings for {ctx.guild.name}", icon_url=ctx.guild.icon_url)
-        embed.add_field(name=f"Log Role Creation: {emojis[0]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Role Deletion: {emojis[1]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Member Banned: {emojis[2]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Member Muted: {emojis[3]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Message Edited: {emojis[4]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Message Deleted: {emojis[5]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Member Leave: {emojis[6]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Member Join: {emojis[7]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Channel Deleted: {emojis[8]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Channel Created: {emojis[9]}", value="\u200b", inline=False)
-        embed.add_field(name=f"Log Bulk Message Delete: {emojis[10]}", value="\u200b", inline=False)
+        embed = discord.Embed(color=random.randint(1, 0xffffff))
+        embed.set_author(name=f"{ctx.guild.name}", icon_url=ctx.guild.icon_url)
+        embed.add_field(name="Logging Settings", value=f"Role Creation: {emojis[0]}\nRole Deletion: {emojis[1]}\nMember Banned: {emojis[2]}\nMember Muted: {emojis[3]}\nMessage Edited: {emojis[4]}\nMessage Deleted: {emojis[5]}\nMember Leave: {emojis[6]}\nMember Join: {emojis[7]}\nChannel Deleted: {emojis[8]}\nChannel Created: {emojis[9]}\nBulk Message Delete: {emojis[10]}", inline=False)
         await ctx.send(embed=embed)
         cursor.close()
         db.close()

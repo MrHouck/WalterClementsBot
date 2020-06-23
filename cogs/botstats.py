@@ -1,11 +1,14 @@
-import discord, datetime, time
-from discord.ext import commands
+import discord, datetime, time, json
+from discord.ext import commands, tasks
 import random
+import requests
+import urllib3
 start_time = time.time()
 
 class BotStats(commands.Cog):
     def __init__(self, client):
         self.bot = client
+
 
     @commands.command()
     async def uptime(self, ctx):
@@ -36,7 +39,9 @@ class BotStats(commands.Cog):
         #get users
         totalMembers = 0
         for guild in self.bot.guilds:
-            totalMembers += guild.member_count
+            for member in guild.members:
+                if not member.bot:
+                    totalMembers+=1
         ping = self.bot.latency
         if ping < 100:
             color = discord.Color.green()
@@ -50,6 +55,8 @@ class BotStats(commands.Cog):
         embed.add_field(name="Total Members", value='{}'.format(totalMembers), inline=False)
         embed.add_field(name="Client Latency", value='{}ms'.format(round(ping*1000)), inline=False)
         await ctx.send(embed=embed)
+
+
 
 def setup(client):
     client.add_cog(BotStats(client))

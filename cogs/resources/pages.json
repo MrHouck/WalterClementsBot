@@ -237,6 +237,16 @@
                 "pl"
             ]
         },
+        "rand": {
+            "name": "rand",
+            "help": null,
+            "usage": "",
+            "aliases": [
+                "random",
+                "randint",
+                "randomnum"
+            ]
+        },
         "randomPicture": {
             "name": "randomPicture",
             "help": "Get a random picture from a subreddit.",
@@ -248,14 +258,14 @@
                 "randomsubreddit",
                 "randomreddit"
             ]
-        },
+        }
+    },
+    "4": {
         "randomname": {
             "name": "randomname",
             "help": "Generate a completey random username.",
             "usage": ""
-        }
-    },
-    "4": {
+        },
         "register": {
             "name": "register",
             "help": "Add yourself to the economy database.",
@@ -310,14 +320,14 @@
             "aliases": [
                 "slot"
             ]
-        },
+        }
+    },
+    "5": {
         "softban": {
             "name": "softban",
             "help": "Ban a user then instantly unban them. Equivalent to a kick, but removes all their messages.",
             "usage": "<member> [reason]"
-        }
-    },
-    "5": {
+        },
         "source": {
             "name": "source",
             "help": "View the source code for the bot.",
@@ -369,18 +379,18 @@
             "name": "unmute",
             "help": "Unmute someone who is muted.",
             "usage": "<member> [reason]"
-        },
+        }
+    },
+    "6": {
         "uptime": {
             "name": "uptime",
             "help": "Get the uptime of the bot.",
             "usage": ""
-        }
-    },
-    "6": {
+        },
         "urbandictionary": {
             "name": "urbandictionary",
             "help": "Search a word on urban dictionary",
-            "usage": "<query>",
+            "usage": "[query]",
             "aliases": [
                 "urban",
                 "ud"

@@ -1,19 +1,13 @@
 import discord, random, os, sys, subprocess
 from discord.ext import commands, tasks
+import datetime
+import time, requests
 from discord.utils import *
 from itertools import cycle
-import logging
+start_time = time.time()
 
 client = commands.Bot(command_prefix='+', case_insensitive=True)
 client.remove_command('help')
-
-logger = logging.getLogger('discord')
-logger.setLevel(logging.DEBUG)
-
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-
-logger.addHandler(handler)
 
 @client.group(invoke_without_subcommand=False, hidden=True)
 @commands.is_owner()
@@ -41,7 +35,6 @@ async def disable(ctx, command: str):
     else:
         c.enabled = False
         return await ctx.send(f"{command} is now disabled")
-
 
 
 
@@ -166,6 +159,9 @@ async def change_status():
     else:
         activity = discord.Activity(name=f"for +help", type=discord.ActivityType.watching)
     await client.change_presence(activity=activity)
+
+
+
 
 for cog in os.listdir("./cogs"):
     if cog.endswith(".py"):

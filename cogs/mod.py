@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 from discord.ext import commands
 from discord.utils import get
 from collections.abc import Sequence
+import random #for random embed colors
 import sqlite3
 blacklistedUsers = []
 
@@ -41,7 +42,7 @@ class Mod(commands.Cog):
         embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-        ##for logs
+        #for logs
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT channel_id, memberBanned FROM logs WHERE guild_id = '{ctx.guild.id}'")
@@ -150,167 +151,6 @@ class Mod(commands.Cog):
             message = f"[({current_time})] - **Member Unbanned**\n```User {member} (ID: {member.id})\nUnbanned by: {ctx.author} (ID: {ctx.author.id})```"
             await channel.send(message)
 
-    @commands.command(usage="<member> <time> [reason]")
-    @commands.guild_only()
-    @commands.has_permissions(administrator=True)
-    async def mute(self, ctx, member : discord.Member, time, *, reason=None):
-        """
-        Mute a user.
-        """
-        if reason is None:
-            reason = "None"
-        await ctx.trigger_typing()
-        s = False
-        m = False
-        h = False
-        d = False
-        if 's' in time:
-            s = True
-            time = time.replace('s', '')
-        elif 'm' in time:
-            m = True
-            time = time.replace('m', '')
-        elif 'h' in time:
-            h = True
-            time = time.replace('h', '')
-        elif 'd' in time:
-            d = True
-            time = time.replace('d', '')
-        else:
-            return await ctx.send("That isn't a valid unit of time! The valid units are: `s, m, h, d`")
-        user_id = member.id
-        guild = ctx.guild
-        time = int(time)
-        role = get(guild.roles, name="Muted")
-        if role:
-            if role in member.roles:
-                embed = discord.Embed(color=0xff2d2d)
-                embed.add_field(name="Error:", value=f"{member} is already muted. Perhaps you meant to unmute them?", inline=False)
-                embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                await ctx.send(embed=embed)
-            else:
-                await member.add_roles(role)
-                embed=discord.Embed()
-
-                now = datetime.now()
-                current_time = now.strftime("%H:%M:%S")
-                logMessage = f"``[({current_time})]`` - **User Muted**"
-                logMessage += f"```User: {member} (ID: {member.id})"
-                
-                embed.set_author(name=f"Muted: {member}", icon_url=member.avatar_url)
-                embed.add_field(name="Reason:", value=f"{reason}", inline=True)
-                if s == True:
-                    embed.add_field(name="Time:", value=f'{time} seconds', inline=True)
-                    logMessage += f"\nLength: {time} seconds"
-                elif m == True:
-                    embed.add_field(name="Time:", value=f'{time} minutes', inline=True)
-                    logMessage += f"\nLength: {time} minutes"
-                elif h == True:
-                    embed.add_field(name="Time:", value=f'{time} hours', inline=True)
-                    logMessage += f"\nLength: {time} hours"
-                elif d == True:
-                    embed.add_field(name="Time:", value=f'{time} days', inline=True)
-                    logMessage += f"\nLength: {time} days"
-                logMessage += f"\nReason: {reason}```"
-
-                embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                await ctx.send(embed=embed)
-
-
-                db = sqlite3.connect('main.sqlite')
-                cursor = db.cursor()
-                cursor.execute(f"SELECT channel_id, memberMuted FROM logs WHERE guild_id = '{guild.id}'")
-                result = cursor.fetchone()
-                if result == None:
-                    pass
-                elif result[1] == 0:
-                    pass
-                else:
-                    channelid = result[0]
-                    channel = self.bot.get_channel(int(channelid))
-                    await channel.send(logMessage)
-
-
-                if s == True:
-                    await asyncio.sleep(time)
-                    await member.remove_roles(role, reason='Mute expired')
-                elif m == True:
-                    await asyncio.sleep(time * 60)
-                    await member.remove_roles(role, reason='Mute expired')
-                elif h == True:
-                    await asyncio.sleep(time * (60**2))
-                    await member.remove_roles(role, reason='Mute expired')
-                elif d == True:
-                    await asyncio.sleep(time * (60**2) * 24)
-                    await member.remove_roles(role, reason='Mute')
-                else:
-                    return await ctx.send('There was an error setting the time for the mute.')
-                
-                if result == None:
-                    return
-                elif result[1] == 0:
-                    return
-                now = datetime.now()
-                current_time = now.strftime("%H:%M:%S")
-                logMessage = f"``[({current_time})]`` - **User Unmuted**"
-                logMessage += f"```User: {member} (ID: {member.id})"
-                logMessage += f"\nReason: Automatic```"
-                await channel.send(logMessage)
-        else:
-            await ctx.send("The muted role is not set up! Creating and adding to the user now...")
-            guild = ctx.guild
-            await guild.create_role(name='Muted', color=discord.Colour.dark_grey(), hoist=False, mentionable=False, reason='Configuring the muted role.')
-            role = get(guild.roles, name="Muted")
-            perms = discord.Permissions(send_messages=False)
-            await role.edit(permissions=perms)
-            await role.edit(position=5)
-            for channel in guild.channels:
-                await channel.set_permissions(role, send_messages=False)
-            await member.add_roles(role)
-
-
-    @commands.command(usage="<member> [reason]")
-    @commands.guild_only()
-    @commands.has_permissions(administrator=True)
-    async def unmute(self, ctx, member : discord.Member, *, reason=None):
-        """
-        Unmute someone who is muted.
-        """
-        if reason is None:
-            reason = "None"
-        await ctx.trigger_typing()
-        guild = ctx.guild
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        cursor.execute(f"SELECT channel_id, memberMuted FROM logs WHERE guild_id = '{guild.id}'")
-        result = cursor.fetchone()
-        if result == None:
-            return
-        elif result[1] == 0:
-            return
-        else:
-            channel = self.bot.get_channel(int(result[0]))
-        now = datetime.now()
-        current_time = now.strftime("%H:%M:%S")
-        logMessage = f"``[({current_time})]`` - **User Unmuted**"
-        logMessage += f"```User: {member} (ID: {member.id})"
-        logMessage += f"\nUnmuted by: {ctx.author} (ID: {ctx.author.id})"
-        logMessage += f"\nReason: {reason}```"
-
-        role = get(guild.roles, name="Muted")
-        if role in member.roles:
-            await member.remove_roles(role)
-            embed=discord.Embed()
-            embed.set_author(name=f"Unmuted: {member}", icon_url=member.avatar_url)
-            embed.add_field(name="Reason:", value=f"{reason}", inline=False)
-            embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=embed)
-            await channel.send(logMessage)
-        else:
-            embed=discord.Embed(color=0xff2d2d)
-            embed.add_field(name="Error:", value=f"{member} is not muted. Perhaps you meant to mute them?", inline=False)
-            embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=embed)
 
     @commands.command(aliases=['addrole'], usage="[rolename] [rolecolor] [hoist] [mentionable] [reason]")
     @commands.guild_only()
@@ -336,120 +176,30 @@ class Mod(commands.Cog):
     @commands.command(aliases=['delrole', 'removerole'], usage="<rolename> [reason]")
     @commands.guild_only()
     @commands.has_permissions(manage_roles=True)
-    async def deleterole(self, ctx, rolename=None, *, reason=None):
+    async def deleterole(self, ctx, role: discord.Role, *, reason=None):
         """
         Delete a role. Note: To remove a role with spaces in it, you must put the role in quotations.
         """
         if reason is None:
             reason = "None."
         await ctx.trigger_typing()
-        if rolename==None:
+        if role==None:
             embed=discord.Embed(color=0xff2d2d)
             embed.add_field(name="Error", value="You must specify a role to delete.", inline=True)
             embed.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
             await ctx.send(embed=embed)
         guild = ctx.guild
-        role = get(guild.roles, name=rolename)
-        if role:
-            try:
-                embe=discord.Embed(title="Success!", color=0x008000)
-                embe.add_field(name=f"The role {role} was deleted", value=f"Reason: {reason}", inline=False)
-                embe.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                await role.delete(reason=reason)
-                await ctx.send(embed=embe)
-            except discord.Forbidden:
-                emb=discord.Embed(color=0xff2d2d)
-                emb.add_field(name="Error", value="You are missing permissions!", inline=True)
-                emb.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-                await ctx.send(embed=emb)
-        else:
-            em=discord.Embed(color=0xff2d2d)
-            em.add_field(name="Error", value="The role you attempted to delete does not exist.", inline=False)
-            em.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
-            await ctx.send(embed=em)
-
-    @commands.group(invoke_without_command=True)
-    @commands.guild_only()
-    async def autorole(self, ctx):
-        """
-        Base command for autorole.
-        """
-        if ctx.invoked_subcommand == None:
-            return await ctx.send('You need to specify a subcommand! (enable, disable, setrole)')
-
-    @autorole.command()
-    @commands.guild_only()
-    @commands.has_permissions(administrator=True)
-    async def setrole(self, ctx, *, role):
-        """
-        Set the role that is to be automatically assigned when a user joins.
-        """
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        guild = ctx.guild
-        cursor.execute(f"SELECT enabled, role FROM autorole WHERE guild_id = '{guild.id}'")
-        result = cursor.fetchone()
-        if result == None:
-            sql = ("INSERT INTO autorole(guild_id, role, enabled) VALUES(?,?,?)")
-            val = (guild.id, role, "true")
-            cursor.execute(sql, val)
-            db.commit()
-        elif get(guild.roles, name=role) == get(guild.roles, name=result[1]):
-            return await ctx.send("This role is already being automatically assigned!")
-        else:
-            role = get(guild.roles, name=role)
-            if role == None:
-                return await ctx.send('This role does not exist!')
-            cursor.execute(f"UPDATE autorole SET role = '{role}' WHERE guild_id = '{guild.id}'")
-            db.commit()
-            cursor.close()
-            db.close()
-            return await ctx.send(f"The new autorole for this server is now {role}.")
-
-    @autorole.command()
-    @commands.guild_only()
-    @commands.has_permissions(administrator=True)
-    async def disable(self, ctx):
-        """
-        Disable the autorole module.
-        """
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        guild = ctx.guild
-        cursor.execute(f"SELECT enabled FROM autorole WHERE guild_id = '{guild.id}'")
-        result = cursor.fetchone()
-        if result == None:
-            return await ctx.send("``Autorole`` has not been setup yet!")
-        elif result == "false":
-            return await ctx.send("``Autorole`` is already disabled!")
-        else:
-            cursor.execute(f"UPDATE autorole SET enabled = 'false' WHERE guild_id = '{guild.id}'")
-            db.commit()
-            cursor.close()
-            db.close()
-    
-    @autorole.command()
-    @commands.guild_only()
-    @commands.has_permissions(manage_guild=True)
-    async def enable(self, ctx):
-        """
-        Enable the autorole module.
-        """
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        guild = ctx.guild
-        cursor.execute(f"SELECT enabled FROM autorole WHERE guild_id = '{guild.id}'")
-        result = cursor.fetchone()
-        if result == None:
-            return await ctx.send("``Autorole`` has not been setup yet!")
-        elif result == "true":
-            return await ctx.send("``Autorole`` is already enabled!")
-        else:
-            cursor.execute(f"UPDATE autorole SET enabled = 'true' WHERE guild_id = '{guild.id}'")
-            db.commit()
-            cursor.close()
-            db.close()
-
+        try:
+            embe=discord.Embed(title="Success!", color=0x008000)
+            embe.add_field(name=f"The role {role} was deleted", value=f"Reason: {reason}", inline=False)
+            embe.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
+            await role.delete(reason=reason)
+            await ctx.send(embed=embe)
+        except discord.Forbidden:
+            emb=discord.Embed(color=0xff2d2d)
+            emb.add_field(name="Error", value="I am missing permissions!", inline=True)
+            emb.set_footer(text=f"{ctx.author}", icon_url=ctx.author.avatar_url)
+            await ctx.send(embed=emb)
 def setup(client):
     client.add_cog(Mod(client))
     now = datetime.now()

@@ -12,32 +12,15 @@ from discord.ext import commands
 from discord.ext import menus
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
-economyInfo = {
-            " 🍎":{"price":2500,"multiplier":2},
-            " 🌽":{"price":5000,"multiplier":2},
-            " ⌚":{"price":10000,"multiplier":2},
-            " 🍚":{"price":15000,"multiplier":2},
-            " 📙":{"price":20000,"multiplier":2},
-            " 🍒":{"price":25000,"multiplier":2},
-            " 💙":{"price":30000,"multiplier":2},
-            " 🛹":{"price":35000,"multiplier":2},
-            " 🔋":{"price":40000,"multiplier":2},
-            " ⌛":{"price":50000,"multiplier":3},
-            " 🏅":{"price":125000,"multiplier":3},
-            " 🐠":{"price":250000,"multiplier":3},
-            " 🦞":{"price":500000,"multiplier":3},
-            " 💵":{"price":600000,"multiplier":3},
-            " 💸":{"price":750000,"multiplier":3},
-            " 💰":{"price":1000000,"multiplier":4},
-            " 💳":{"price":2500000,"multiplier":4},
-            " 📈":{"price":5000000,"multiplier":4},
-            " 💎":{"price":10000000,"multiplier":4},
-            " 😳":{"price":25000000,"multiplier":4},
-            " 😃":{"price":50000000,"multiplier":4},
-            " ⭐":{"price":100000000,"multiplier":4},
-            " 🎉":{"price":250000000,"multiplier":5},
-            " 🤑":{"price":1000000000,"multiplier":10}
-        }
+f = open(THIS_FOLDER+'/resources/economy.json', 'r')
+economyInfo = json.load(f)
+f.close()
+f = open(THIS_FOLDER+'/resources/emoji.json', 'r')
+emojiData = json.load(f)
+f.close()
+
+def convertEmoji(emojiName : str):
+    return emojiData[emojiName]
 
 class ShopMenu(menus.Menu):
     pageIndex = 0
@@ -53,9 +36,9 @@ class ShopMenu(menus.Menu):
         i=1
         for item in economyInfo:
             if lower <= i <= upper: 
-                embed.add_field(name="{} - {:,}".format(item, economyInfo[item]['price']), value=f"Gain {economyInfo[item]['multiplier']}x as much money", inline=False)
+                embed.add_field(name="{} - {:,}".format(convertEmoji(item), economyInfo[item]['price']), value=f"Gain {economyInfo[item]['multiplier']}x as much money", inline=False)
             i += 1
-        embed.set_footer(text="Multipliers stack.")
+        embed.set_footer(text="Multipliers add. (If you get the apple and the corn, you get a 2.2x multiplier)")
         return embed
 
     async def send_initial_message(self, ctx, channel):        
@@ -125,9 +108,21 @@ class Economy(commands.Cog):
             userBalance = result[0]
             userInventory = result[1]
             nextDaily = result[2]
-            userInventory = userInventory.replace(',', ' ')
-            if userInventory == " ":
+            if userInventory == "":
                 userInventory = "\u200b"
+            else:
+                try:
+                    if userInventory == "apple":
+                        userInventory = convertEmoji("apple")
+                    else:
+                        userInventory = userInventory.split(',')
+                        temp = ""
+                        for item in userInventory:
+                            temp += convertEmoji(item)
+                        userInventory = temp
+                except:
+                    pass
+
             nextDaily = datetime.strptime(nextDaily, '%Y-%m-%d %H:%M:%S.%f')
             today=datetime.today()
             trueNextDaily = nextDaily-today
@@ -163,7 +158,7 @@ class Economy(commands.Cog):
         if result is None:
             today = datetime.today() #for the nextdaily value
             sql = ("INSERT INTO economy(user_id, money, inventory, nextDaily) VALUES(?, ?, ?, ?)")
-            val = (ctx.author.id, 100, " ", str(today)) 
+            val = (ctx.author.id, 100, "", str(today)) 
             cursor.execute(sql, val)
             db.commit() 
             sql = ("INSERT INTO towers(user_id, toClaim, coinsPerHour, homes, groceryStores, restaurants, clothingStores, electronicsStores, factories, banks, spaceStations) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
@@ -203,56 +198,69 @@ class Economy(commands.Cog):
             cursor.execute(f"SELECT money FROM economy WHERE user_id = '{ctx.author.id}'")
             result1 = cursor.fetchone()
             money = result1[0]
-            # Catches: 🐡, 🐟, 🐠, 🦀, 🐙
-            # Rare Catches: 🦈, 🐬
-            # Very Rare Catches: 🐳
-            # Junk: 👢, 🛒, 📎, 🚫
-            types=[1, 2, 3, 4] #1 = normal, 2=rare, 3=very rare, 4=junk
-            weights=[0.4, 0.185, 0.005, 0.21]
+            #(1) Catches: 🐟
+            #(2) Rare Catches: 🐠
+            #(3) Very Rare Catches: 🐳
+            #(4) Exotic Catches: 🐙, 🐬, 🦀
+            #(5) Junk: 👢, 🛒, 📎, 🚫
+            types=[1, 2, 3, 4, 5]
+             
+            weights=[.4, .1, .019, .001, .48]
+            
             selectedType = choices(types, weights)
+
+            exotic = False
             if selectedType[0] == 1:
-                catches = ['🐡', '🐟', '🐠', '🦀', '🐙']
-                catch = random.choice(catches)
-                weight = random.uniform(0.5, 1.5)
-                weight = round(weight, 3)
+                catch = '🐟'
+                weight = random.uniform(2.0, 3.0)
+                weight = round(weight, 1)
                 value = weight * 9.87
-                value = round(value, 3)
+                value = round(value, 1)
             elif selectedType[0] == 2:
-                catches = ['🦈', '🐬']
-                catch = random.choice(catches)
-                weight = random.uniform(3.0, 5.0)
-                weight = round(weight,3)
+                catch = '🐡'
+                weight = random.uniform(5.0, 7.0)
+                weight = round(weight,1)
                 value = weight * 2.64
-                value = round(value, 3)
+                value = round(value, 1)
             elif selectedType[0] == 3:
-                catch = '🐳'
+                catch = '🐠'
                 weight = random.uniform(8.0, 10.0)
-                weight = round(weight, 3)
+                weight = round(weight, 1)
                 value = weight * 6
-                value = round(value, 3)
+                value = round(value, 1)
             elif selectedType[0] == 4:
+                exotic=True
+                catches= ['🐙', '🐬', '🦀']
+                weight = random.uniform(100.0, 250.0)
+                weight = round(weight, 1)
+                value = weight * 4
+            elif selectedType[0] == 5:
                 catches = ['👢', '🛒', '📎', '🚫']
                 catch = random.choice(catches)
                 weight = 1
-                value = 2
+                value = 3
             cursor.execute(f"SELECT inventory FROM economy WHERE user_id = '{ctx.author.id}'")
             result = cursor.fetchone()
             userInventory = result[0]
             if userInventory != " ":
                 userInventory = userInventory.split(',')
+                multiplier = 0
                 for item in userInventory:
-                    value *= economyInfo[item]["multiplier"]
+                    multiplier += economyInfo[item]["multiplier"]
+                value *= multiplier
             else:
                 pass
-            value = round(value, 3)
+            value = round(value, 1)
             sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
             val = (float(money) + value, str(ctx.author.id))
             cursor.execute(sql, val)
             db.commit()
             cursor.close()
             db.close()
-            await ctx.send(f"🎣 | You caught a {catch}, weighing {round(weight,3)}g with a value of **{value} 💠!**")
-            return
+            if exotic:
+                return await ctx.send(f"🎣 | **WOW!!!** You caught an __**exotic**__ {catch}, weighing {round(weight,1)} grams with a value of **{value} 💠!**")
+            else:
+                return await ctx.send(f"🎣 | You caught a {catch}, weighing {round(weight,1)} grams with a value of **{value} 💠!**")
     
     @commands.command(aliases=['daily'])
     @commands.guild_only()
@@ -288,8 +296,10 @@ class Economy(commands.Cog):
                 #checking if user inventory is empty
                 if userInventory != " ":
                     userInventory = userInventory.split(',')
+                    multiplier = 0
                     for item in userInventory:
-                        value *= economyInfo[item]["multiplier"]
+                        multiplier += economyInfo[item]["multiplier"]
+                    value *= multiplier
                 else:
                     pass
                 #update
@@ -331,7 +341,9 @@ class Economy(commands.Cog):
         """
         Buy a badge from the shop (Must be registered)
         """
-        item = " "+item
+        for name, ustring in emojiData.items():
+            if ustring == item:
+                item = name
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT user_id FROM economy WHERE user_id = '{ctx.author.id}'")
@@ -353,7 +365,7 @@ class Economy(commands.Cog):
                 if float(balance) < economyInfo[item]["price"]:
                     return await ctx.send('You don\'t have enough money to buy this!')
                 else:
-                    if userInventory == " ": #if user inventory is empty
+                    if userInventory == "": #if user inventory is empty
                         updatedInventory = "{}".format(item)
                     else:
                         updatedInventory = userInventory + f",{item}"
@@ -369,8 +381,7 @@ class Economy(commands.Cog):
                     db.commit()
                     cursor.close()
                     db.close()
-
-                    return await ctx.send(f'You now own{item}, you can see it in your inventory!')
+                    return await ctx.send(f'You now own {convertEmoji(item)}, you can see it in your inventory!')
 
     @commands.command()
     @commands.guild_only()
@@ -434,6 +445,8 @@ class Economy(commands.Cog):
             val = (result[0]-money, ctx.author.id)
             cursor.execute(sql, val)
             db.commit() #save
+            cursor.close()
+            db.close()
             possibleEmojis = ['🍌','🍇','🍒','🔔','🍈','💎','🍉','🍊','🍐','🎰']
             message = await ctx.send("Rolling...")
             
@@ -475,7 +488,7 @@ class Economy(commands.Cog):
                     "🍇":3,
                     "🍊":3,
                     "🍉":3,
-                    "🔔": 1,
+                    "🔔":10,
                     "💎":10,
                     "🎰":50
                 },
@@ -487,9 +500,9 @@ class Economy(commands.Cog):
                 "🍇":10,
                 "🍊":10,
                 "🍉":10,
-                "🔔":75,
-                "💎":75,
-                "🎰":200
+                "🔔":50,
+                "💎":50,
+                "🎰":100
                 }
             }
 
@@ -513,8 +526,9 @@ class Economy(commands.Cog):
                 else:
                     value = money
                     value *= multipliers[itemCount][relevantSlots[1]]
-                    if multipliers[itemCount][relevantSlots[1]] == 200:
+                    if multipliers[itemCount][relevantSlots[1]] == 100:
                         jackpot = True
+            db = sqlite3.connect('main.sqlite')
             sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
             val = (balance+value, str(ctx.author.id))
             cursor.execute(sql, val)

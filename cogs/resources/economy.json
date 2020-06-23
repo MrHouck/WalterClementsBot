@@ -1,0 +1,98 @@
+{
+    "apple": {
+      "price": 2500,
+      "multiplier": 1.1
+    },
+    "corn": {
+      "price": 4000,
+      "multiplier": 1.1
+    },
+    "watch": {
+      "price": 7500,
+      "multiplier": 1.1
+    },
+    "rice": {
+      "price": 10000,
+      "multiplier": 1.1
+    },
+    "orange_book": {
+      "price": 15000,
+      "multiplier": 1.1
+    },
+    "cherries": {
+      "price": 20000,
+      "multiplier": 1.2
+    },
+    "blue_heart": {
+      "price": 30000,
+      "multiplier": 1.3
+    },
+    "skateboard": {
+      "price": 35000,
+      "multiplier": 1.3
+    },
+    "battery": {
+      "price": 40000,
+      "multiplier": 1.3
+    },
+    "hourglass": {
+      "price": 45000,
+      "multiplier": 1.4
+    },
+    "medal": {
+      "price": 50000,
+      "multiplier": 1.4
+    },
+    "tropical_fish": {
+      "price": 65000,
+      "multiplier": 1.5
+    },
+    "lobster": {
+      "price": 70000,
+      "multiplier": 1.5
+    },
+    "dollar": {
+      "price": 80000,
+      "multiplier": 1.6
+    },
+    "money_with_wings": {
+      "price": 100000,
+      "multiplier": 1.6
+    },
+    "moneybag": {
+      "price": 110000,
+      "multiplier": 1.8
+    },
+    "credit_card": {
+      "price": 130000,
+      "multiplier": 1.8
+    },
+    "chart_with_upwards_trend": {
+      "price": 140000,
+      "multiplier": 1.8
+    },
+    "gem": {
+      "price": 160000,
+      "multiplier": 2
+    },
+    "flushed": {
+      "price": 190000,
+      "multiplier": 2
+    },
+    "smiley": {
+      "price": 210000,
+      "multiplier": 2
+    },
+    "star": {
+      "price": 240000,
+      "multiplier": 2.2
+    },
+    "tada": {
+      "price": 270000,
+      "multiplier": 2.2
+    },
+    "money_mouth": {
+      "price": 300000,
+      "multiplier": 16
+    }
+  }

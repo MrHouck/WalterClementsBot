@@ -211,5 +211,18 @@
             "\n- Wrote usages for every command, now it should be less confusing.",
             "\n- I wrote my own API Wrapper for urban dictionary, so ``+urban`` should be fixed now!"
         ]
+    },
+    "9":
+    {
+        "date":"TBD",
+        "changes":[
+            "- This update took a __really__ long time to do, sorry about that.",
+            "\n- Multiple changes to the `autorole` module. The gist is that you can now have multiple autoroles.",
+            "\n- You can now enable and disable all settings at once in logging. (+logs enable/disable all)",
+            "\n- Basically rewrote all of muting. You can now mute for an infinite amount of time, and it is incredibly optimized now.",
+            "\n- Attempted to re-balance the economy (and changed some under the hood stuff), again. Slots is back, along with minor changes.",
+            "\n- Added a ``+rand`` command.",
+            "\n- So many optimizations, a lot of commands are faster now."
+        ]
     }
 }

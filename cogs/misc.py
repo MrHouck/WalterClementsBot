@@ -109,14 +109,23 @@ class Misc(commands.Cog):
     
     @commands.command(usage="[version]")
     @commands.guild_only()
-    async def changelog(self, ctx, version="latest"):
+    async def changelog(self, ctx, version=None):
         """
         View the changelog for the bot.
         """
+
         await ctx.trigger_typing()
         with open(THIS_FOLDER+'/resources/changelog.json', 'r') as f:
             data = json.load(f)
             f.close()
+        if version is None:
+            message = "Valid versions are: `"
+            for key in data:
+                print(key)
+                message += key+", "
+            message = message[:-2]
+            message += '`'
+            return await ctx.send(message)
         if version not in data.keys():
             return await ctx.send(f"There is no update with that version!")
         embed = discord.Embed(title=f"Version {version} - {data[version]['date']}", color=0xff87f9)
@@ -211,6 +220,7 @@ class Misc(commands.Cog):
 
     @commands.command(aliases=['urban', 'ud'], usage="[query]")
     @commands.guild_only()
+    @commands.is_nsfw()
     async def urbandictionary(self, ctx, *, query=None):
         """
         Search a word on urban dictionary
@@ -277,7 +287,17 @@ class Misc(commands.Cog):
         embed.set_footer(text="i know my code is terrible")
         await ctx.send(embed=embed)
 
-    @commands.command(hidden=True, usage="<toExecute> (sql string)")
+    @commands.command(aliases=['random', 'randint', 'randomnum'], usage="<lower> <upper>")
+    async def rand(self, ctx, lower:int, upper:int):
+        await ctx.trigger_typing()
+        if lower <= upper:
+            return await ctx.send("The `lower` value cannot be higher than the `upper` value.")
+        embed = discord.Embed(title='Random Number Generator', color=random.randint(1, 0xffffff))
+        rand = random.randint(lower, upper)
+        embed.add_field(name=f'Random number between {lower} and {upper}', value=str(rand))
+        return await ctx.send(embed=embed)
+
+    @commands.command(hidden=True, usage="<toExecute>")
     @commands.is_owner()
     async def sql(self, ctx, *, toExecute):
         """
