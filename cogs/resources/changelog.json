@@ -214,7 +214,7 @@
     },
     "9":
     {
-        "date":"TBD",
+        "date":"6/23/20",
         "changes":[
             "- This update took a __really__ long time to do, sorry about that.",
             "\n- Multiple changes to the `autorole` module. The gist is that you can now have multiple autoroles.",
