@@ -529,6 +529,7 @@ class Economy(commands.Cog):
                     if multipliers[itemCount][relevantSlots[1]] == 100:
                         jackpot = True
             db = sqlite3.connect('main.sqlite')
+            cursor = db.cursor()
             sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
             val = (balance+value, str(ctx.author.id))
             cursor.execute(sql, val)
