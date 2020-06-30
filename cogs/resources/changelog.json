@@ -227,7 +227,7 @@
     },
     "9.1":
     {
-        "date":"6/24/20",
+        "date":"6/30/20",
         "changes":[
             "- Changed a LOT about slots. Fixed a bug where money wasn't taken, added more emojis, and changed probabilities and multipliers. I really hope this is the last time I have to fix this command.",
             "- `+urban` can only be used in NSFW channels",
