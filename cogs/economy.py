@@ -136,7 +136,7 @@ class Economy(commands.Cog):
             embed = discord.Embed(color=member.color, timestamp=ctx.message.created_at) #using the members top role color
             embed.set_thumbnail(url=member.avatar_url) #getting the tagged members picture and setting it as the thumbnail
             embed.set_author(name=f'Economy Stats - {member}')
-            embed.add_field(name='Balance:', value=f'{round(float(userBalance), 3)} 💠', inline=False) #adding the users balance
+            embed.add_field(name='Balance:', value=f'{round(float(userBalance), 3)} <:coin:726193607564066888>', inline=False) #adding the users balance
             embed.add_field(name='Inventory:', value=f'{userInventory}', inline=False) #adding the Inventory
             embed.add_field(name='Next Daily:', value=f'{hours} hours and {minutes} minutes')
             embed.set_footer(text=f'User ID: {member.id}')
@@ -169,7 +169,7 @@ class Economy(commands.Cog):
             db.close()
             #send embed
             embed = discord.Embed(title='*Registered!*', color=ctx.message.author.color)
-            embed.add_field(name='You have been added to the database!', value='To start off, you have been credited __100 coins__.')
+            embed.add_field(name='You have been added to the database!', value='To start off, you have been credited __100 <:coin:726193607564066888>__.')
             embed.set_footer(text="Also, because of the idle money maker, you make 10 coins per hour!")
             await ctx.send(embed=embed)
             return
@@ -258,9 +258,9 @@ class Economy(commands.Cog):
             cursor.close()
             db.close()
             if exotic:
-                return await ctx.send(f"🎣 | **WOW!!!** You caught an __**exotic**__ {catch}, weighing {round(weight,1)} grams with a value of **{value} 💠!**")
+                return await ctx.send(f"🎣 | **WOW!!!** You caught an __**exotic**__ {catch}, weighing {round(weight,1)} grams with a value of **{value} <:coin:726193607564066888>!**")
             else:
-                return await ctx.send(f"🎣 | You caught a {catch}, weighing {round(weight,1)} grams with a value of **{value} 💠!**")
+                return await ctx.send(f"🎣 | You caught a {catch}, weighing {round(weight,1)} grams with a value of **{value} <:coin:726193607564066888>!**")
     
     @commands.command(aliases=['daily'])
     @commands.guild_only()
@@ -311,7 +311,7 @@ class Economy(commands.Cog):
                 db.close()
 
                 embed = discord.Embed(title='Daily Credits Obtained!', color=ctx.message.author.color)
-                embed.add_field(name='You have withdrawn your daily allowance.', value=f'{value} 💠 has been added to your account.')
+                embed.add_field(name='You have withdrawn your daily allowance.', value=f'{value} <:coin:726193607564066888> has been added to your account.')
                 await ctx.send(embed=embed)
                 return
             else:
@@ -344,6 +344,7 @@ class Economy(commands.Cog):
         for name, ustring in emojiData.items():
             if ustring == item:
                 item = name
+        
         db = sqlite3.connect('main.sqlite')
         cursor = db.cursor()
         cursor.execute(f"SELECT user_id FROM economy WHERE user_id = '{ctx.author.id}'")
@@ -405,10 +406,10 @@ class Economy(commands.Cog):
                 member = await self.bot.fetch_user(int(user[0]))
             money = user[1]
             if str(ctx.author.id) == user[0]:
-                yourPos = f"**{i}**.  {ctx.author} — **{round(money, 3)}**💠"
+                yourPos = f"**{i}**.  {ctx.author} — **{round(money, 3)}**<:coin:726193607564066888>"
                 userFound = True
             if i <= 20:
-                msg += f"__{i}__. | {member} — **{round(money, 3)}**💠\n"
+                msg += f"__{i}__. | {member} — **{round(money, 3)}**<:coin:726193607564066888>\n"
         if userFound is False:
             yourPos = f"{ctx.author} - **Unranked**"
         msg += "\n{}".format(yourPos)
@@ -416,47 +417,55 @@ class Economy(commands.Cog):
         await message.edit(embed=embed)
 
     @commands.command(aliases=['slot'], usage="[money]")
-    @commands.cooldown(1, 15, commands.BucketType.user)
+    @commands.cooldown(1, 8, commands.BucketType.user)
     @commands.guild_only()
     async def slots(self, ctx, money=1):
         """
         Take your chances and win big money
-        """
-        if money < 0:
+        """ 
+        debug = False
+        if money == 80085:
+            if ctx.author.id == 250067504641081355:
+                debug = True
+            else:
+                money=80085
+                await ctx.send('nice.')
+
+        if money <= 0:
             return await ctx.send('no')
         db = sqlite3.connect("main.sqlite")
         cursor = db.cursor()
         cursor.execute(f"SELECT money FROM economy WHERE user_id = {ctx.author.id}")
         result = cursor.fetchone()
         if result is None: #user hasn't registered
-            db.close()
             cursor.close()
+            db.close()
             return await ctx.send(f"{ctx.author.mention}, you haven't registered yet!")
         else:
             #check if they have the money
             balance = result[0]
-            if balance < money:
-                db.close()
+            if balance < money and debug is False:
                 cursor.close()
+                db.close()
                 return await ctx.send(f"{ctx.author.mention}, you can't afford this!")
            
             #take the money
-            sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
-            val = (result[0]-money, ctx.author.id)
-            cursor.execute(sql, val)
-            db.commit() #save
-            cursor.close()
-            db.close()
-            possibleEmojis = ['🍌','🍇','🍒','🔔','🍈','💎','🍉','🍊','🍐','🎰']
+            if not debug:
+                balance = result[0]-money
+
+
+            possibleEmojis = ['🍌','🍐','🍍','🍉', '🍊', '🍈', '🍇','🍒','🥝','🍪','🍞','🧃','💎','🔔','🎰']
+
             message = await ctx.send("Rolling...")
             
-            for i in range(0, 3):
+            for i in range(0, random.randint(1, 7)):
                 slotEmojis = []
-            
+
                 for j in range(0, 9):    
-                    rand = numpy.random.choice(a=numpy.arange(0,10), p=[0.15, 0.15, 0.05, 0.15, 0.15, 0.05, 0.075, 0.1, 0.1, 0.025])
+                    rand = numpy.random.choice(a=numpy.arange(0,15), p=[0.3, 0.125, 0.1, 0.09, 0.08, 0.075, 0.065, 0.045, 0.035, 0.02, 0.02, 0.015, 0.015, 0.01, 0.005])
                     slotEmojis.append(possibleEmojis[rand])
-            
+                if debug:
+                    await ctx.send(slotEmojis)            
                 msg ="**[(  SLOTS  )]**\n-----------------\n"
                 k = 1
            
@@ -478,70 +487,86 @@ class Economy(commands.Cog):
             jackpot=False
             relevantSlots = []
             relevantSlots.extend([slotEmojis[3], slotEmojis[4], slotEmojis[5]])
+            if debug:
+                await ctx.send(f"Relevant slots: {relevantSlots}")
             multipliers = {
                 2: 
                 {
-                    "🍌":0,
-                    "🍒":2,
-                    "🍐":3,
-                    "🍈":3,
-                    "🍇":3,
-                    "🍊":3,
-                    "🍉":3,
-                    "🔔":10,
-                    "💎":10,
-                    "🎰":50
+                    "🍌":1.3,
+                    "🍐":1.425,
+                    "🍍":1.525,
+                    "🍉":1.620,
+                    "🍊":1.705,
+                    "🍈":1.780,
+                    "🍇":1.864,
+                    "🍒":1.943,
+                    "🥝":2,
+                    "🍪":2.1,
+                    "🍞":2.25,
+                    "🧃":2.45,
+                    "💎":2.78,
+                    "🔔":3,
+                    "🎰":5
                 },
                 3:
-                {"🍌":1,
-                "🍒":10,
-                "🍐":10,
-                "🍈":10,
-                "🍇":10,
-                "🍊":10,
-                "🍉":10,
-                "🔔":50,
-                "💎":50,
-                "🎰":100
+                {
+                    "🍌":2.817,
+                    "🍐":3.383,
+                    "🍍":3.875,
+                    "🍉":4.373,
+                    "🍊":4.845,
+                    "🍈":5.28,
+                    "🍇":5.783,
+                    "🍒":6.292,
+                    "🥝":6.667,
+                    "🍪":7.35,
+                    "🍞":8.437,
+                    "🧃":10.003,
+                    "💎":12.88,
+                    "🔔":15,
+                    "🎰":41.667
                 }
-            }
-
-
-            
+            }               
             itemCount = relevantSlots.count(relevantSlots[0])
             if itemCount == 1:
                 itemCount = relevantSlots.count(relevantSlots[1])
                 if itemCount == 1: #at this point there cannot be any more possible winning combinations, so we say they lost money
                     pass #value is already 0
                 else:
-                    #item count >= 2
-                    if multipliers[itemCount][relevantSlots[1]] == 0:
-                        pass #they got 2 bananas, worthless, so value stays at 0
-                    else:
-                        value = money
-                        value *= multipliers[itemCount][relevantSlots[1]]
+                    value = money
+                    value *= multipliers[itemCount][relevantSlots[1]]
             else:
                 if multipliers[itemCount][relevantSlots[1]] == 0:
                     pass #they got 2 bananas, worthless, so value stays at 0
                 else:
                     value = money
                     value *= multipliers[itemCount][relevantSlots[1]]
-                    if multipliers[itemCount][relevantSlots[1]] == 100:
+                    if multipliers[itemCount][relevantSlots[1]] == 41.667:
                         jackpot = True
-            db = sqlite3.connect('main.sqlite')
-            cursor = db.cursor()
-            sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
-            val = (balance+value, str(ctx.author.id))
-            cursor.execute(sql, val)
-            db.commit()
-            cursor.close()
-            db.close()
+            if debug:
+                await ctx.send(itemCount)
+                if itemCount > 1:
+                    await ctx.send(multipliers[itemCount][relevantSlots[0]])
+                    await ctx.send(multipliers[itemCount][relevantSlots[1]])
+            if not debug:
+                db = sqlite3.connect('main.sqlite')
+                cursor = db.cursor()
+                value = int(value)
+                sql = ("UPDATE economy SET money = ? WHERE user_id = ?")
+                val = (balance+value, str(ctx.author.id))
+                cursor.execute(sql, val)
+                db.commit()
+                cursor.close()
+                db.close()
+            
+            
             if value > 0 and jackpot is False:
-                msg+=f'\n**{ctx.author.name}** spent **{money}** 💠 and made **{value}** 💠'
+                msg+=f'\n**{ctx.author.name}** spent **{money}** coins and won **{value}** coins'
             elif jackpot is True:
-                msg+=f'\n**{ctx.author.name}** spent **{money}** 💠 and 🎉🎰**__WON THE JACKPOT__**🎰🎉'
+                msg+=f'\n**{ctx.author.name}** spent **{money}** coins and won **{value}** coins. **Jackpot!**'
             else:
-               msg+=f'\n**{ctx.author.name}** spent **{money}** 💠 and lost it all :('
+                face = random.choice([':(', ':<', ':c', ':C', ':L', ':/', ':|', 'ಠ_ಠ', '>:[', ':{', ';(', '(._.)', ';-;', '.-.'])
+                msg+=f'\n**{ctx.author.name}** spent **{money}** coins and lost it all {face}'
             await asyncio.sleep(1)
             await message.edit(content=msg)
             

@@ -240,7 +240,7 @@
         "rand": {
             "name": "rand",
             "help": null,
-            "usage": "",
+            "usage": "<lower> <upper>",
             "aliases": [
                 "random",
                 "randint",

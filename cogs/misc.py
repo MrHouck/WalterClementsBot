@@ -3,6 +3,8 @@ import wikipedia
 import PIL
 import time
 import json
+import math
+
 import os
 import random
 import sqlite3
@@ -13,7 +15,9 @@ from PIL import Image
 from googlesearch import search
 from datetime import datetime
 from discord.ext import commands
+from urllib.request import urlopen
 from textwrap import wrap
+from urllib.parse import quote
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
 class Misc(commands.Cog):
@@ -289,6 +293,9 @@ class Misc(commands.Cog):
 
     @commands.command(aliases=['random', 'randint', 'randomnum'], usage="<lower> <upper>")
     async def rand(self, ctx, lower:int, upper:int):
+        """
+        Generate a random number in a range.
+        """
         await ctx.trigger_typing()
         if lower > upper:
             return await ctx.send("The `lower` value cannot be higher than the `upper` value.")
@@ -325,6 +332,22 @@ class Misc(commands.Cog):
                 return await ctx.send("done")
         except Exception as e:
             return await ctx.send(e)
+
+    @commands.command(aliases=['e', 'emote'], usage="<emoji>")
+    @commands.guild_only()
+    async def emoji(self, ctx, emoj: discord.Emoji):
+        """
+        View a custom emoji.
+        """
+        embed = discord.Embed(color=random.randint(1, 0xffffff), title=emoj.name)
+        emojiUrl="https://cdn.discordapp.com/emojis/{}.png?v=1".format(emoj.id)
+        embed.set_image(url=emojiUrl)
+        return await ctx.send(embed=embed)
+
+    
+
+
+
 def setup(client):
     client.add_cog(Misc(client))
     now = datetime.now()

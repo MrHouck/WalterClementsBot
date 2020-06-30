@@ -1,14 +1,17 @@
 import discord, datetime, time, json
 from discord.ext import commands, tasks
 import random
+import os
 import requests
 import urllib3
 start_time = time.time()
+THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
+
 
 class BotStats(commands.Cog):
     def __init__(self, client):
         self.bot = client
-
+        
 
     @commands.command()
     async def uptime(self, ctx):
@@ -57,7 +60,7 @@ class BotStats(commands.Cog):
         await ctx.send(embed=embed)
 
 
-
+        
 def setup(client):
     client.add_cog(BotStats(client))
     now = datetime.datetime.now()
