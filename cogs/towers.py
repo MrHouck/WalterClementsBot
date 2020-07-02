@@ -20,7 +20,7 @@ class Towers(commands.Cog):
 
     @tower.command(usage="[member]")
     @commands.guild_only()
-    async def view(self, ctx, member=None):
+    async def view(self, ctx, member : discord.Member=None):
         """
         View your tower or someone elses.
         """

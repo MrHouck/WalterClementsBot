@@ -8,7 +8,6 @@ import os
 import re
 import sqlite3
 import base64
-import jackbox
 import praw
 import binascii
 from discord.ext import commands
@@ -31,7 +30,7 @@ reddit = praw.Reddit(client_id = client_data['reddit_client_id'],
                 password= client_data['reddit_bot_password'],
                 user_agent= 'desktop:Walter_Clements_Bot:v1.0.0 (by /u/MrHouck)',
                 username = 'RandomImageFromSub')
-jbclient = jackbox.Client()
+
 trans = Translator()
 class Fun(commands.Cog):
     def __init__(self, client):
@@ -485,21 +484,6 @@ class Fun(commands.Cog):
         embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
-    @commands.command(usage="<message>")
-    @commands.guild_only()
-    async def chatbot(self, ctx, *, message):
-        """
-        Chat with a chatbot.
-        """
-        message = message.replace(' ', '_')
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3'}
-        reg_url = f'https://some-random-api.ml/chatbot?message={message}'
-        req = Request(url=reg_url, headers=headers) 
-        response = urlopen(req)
-        result = json.loads(response.read())
-        reply = result["response"]
-        await ctx.send(reply)
-
     @commands.command()
     @commands.guild_only()
     async def hug(self, ctx):
@@ -573,169 +557,6 @@ class Fun(commands.Cog):
         fact = result["fact"]
         return await ctx.send(fact)
 
-    @commands.cooldown(1, 300, commands.BucketType.user)
-    @commands.guild_only()
-    @commands.command(aliases=['pl'], usage="<row><column> <color>")
-    async def place(self, ctx, *args):
-        """
-        A replica of r/place, on your server!
-        """
-        db = sqlite3.connect('main.sqlite')
-        cursor = db.cursor()
-        cursor.execute(f"SELECT base64string FROM places WHERE guild_id = {ctx.guild.id}")
-        response = cursor.fetchone()
-        if str(args) == "()":
-            self.place.reset_cooldown(ctx)
-            if response is None:      
-                sql = ("INSERT INTO places(guild_id, base64string) VALUES(?, ?)")
-                with open(THIS_FOLDER + '/resources/placetemplate.png', 'rb') as f:
-                    data = f.read()
-                    base64string = base64.b64encode(data)
-                val = (ctx.guild.id, base64string)
-                cursor.execute(sql, val)
-                db.commit()
-                im = Image.open(BytesIO(base64.b64decode(base64string)))
-                buffer = BytesIO()
-                im.save(buffer, 'png')
-                buffer.seek(0)
-                await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
-                buffer.close()
-            else:
-                try:
-                    base64string = response[0].replace("b'", '').replace("'", '')
-                except:
-                    base64string = response[0]
-                im = Image.open(BytesIO(base64.b64decode(base64string)))
-                buffer = BytesIO()
-                im.save(buffer, 'png')
-                buffer.seek(0)
-                await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
-                buffer.close()
-        else:
-            try:
-                base64string = response[0].replace("b'", '').replace("'", '')
-            except:
-                base64string = response[0]
-            validColors = ["white", "black", "gray", "lightgray", "brown", "red", "orange", "yellow", "lime", "green", "lightblue", "blue", "purple", "magenta", "pink"]
-            validCoords = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","1","2","3","4","5","6"]
-            #draw lmao
-            #x offset of +34
-            #y offset of -34
-            if len(args) > 2:
-                self.place.reset_cooldown(ctx)
-                return await ctx.send("You supplied too many arguments! Do ``+place <coordinates> <color>``")
-            coordinates = args[0]
-            color = args[1]
-            if color not in validColors:
-                self.place.reset_cooldown(ctx)
-                return await ctx.send(f"{ctx.author.mention}, invalid color! Please pick from `white, black, gray, lightgray, brown, red, orange, yellow, lime, green, lightblue, blue, purple, magenta, pink`")
-            if coordinates[:-1] not in validCoords or coordinates[1] not in validCoords:
-                self.place.reset_cooldown(ctx)
-                return await ctx.send(f"{ctx.author.mention}, invalid position! Coordinates look like this: `d6` or `ac`")
-            #convert coords to x and y 
-            if coordinates[:-1].isalpha():
-                #letter, y
-                y = ord(coordinates[:-1]) - 96 #since we have offset of 34, norm would be 96
-            else:
-                #int, y
-                y = int(coordinates[:-1])
-            if coordinates[1].isalpha():
-                #letter, x
-                x = ord(coordinates[1]) - 96
-            else:
-                #int, x
-                x = int(coordinates[1])
-            x=x*32+2
-            y=y*32+2
-            #open image
-            image = Image.open(BytesIO(base64.b64decode(base64string)))
-            image = image.convert("RGBA")
-            pixelColor = ImageColor.getcolor(color, "RGBA")
-            for i in range(0, 32):
-                for j in range(0, 32):
-                    image.putpixel((x+j, y+i), pixelColor)
-            #save to buffer
-            buffer = BytesIO()
-            image.save(buffer, format='png')
-            base64string = base64.b64encode(buffer.getvalue())
-            sql =(f"UPDATE places SET base64string = ? WHERE guild_id = ?")
-            val = (str(base64string), ctx.guild.id)
-            cursor.execute(sql, val)
-            db.commit()
-            cursor.close()
-            db.close()
-            buffer.seek(0)
-            await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
-
-    @place.error
-    async def place_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send(f"{ctx.author.mention}, You can't place a pixel, you're on cooldown right now. Here's the canvas though!")
-            db = sqlite3.connect('main.sqlite')
-            cursor = db.cursor()
-            cursor.execute(f"SELECT base64string FROM places WHERE guild_id = {ctx.guild.id}")
-            response = cursor.fetchone()
-            try:
-                base64string = response[0].replace("b'", '').replace("'", '')
-            except:
-                base64string = response[0]
-            im = Image.open(BytesIO(base64.b64decode(base64string)))
-            buffer = BytesIO()
-            im.save(buffer, 'png')
-            buffer.seek(0)
-            await ctx.send(file=discord.File(buffer, filename=f"{ctx.guild.id}-place.png"))
-            buffer.close()
-            cursor.close()
-            db.close()
-        else:
-            pass
-
-    @commands.command(usage="<channel> <code>")
-    @commands.guild_only()
-    async def jackbox(self, ctx, channel : discord.TextChannel, code):
-        """
-        Host a jackbox game in a discord text channel with a specified code.
-        """
-        try:
-            connection = await jbclient.connect(code=code, name='Verifying...')
-        except:
-            return await ctx.send("Invalid code.")
-        
-        await jbclient.close()
-        embed = discord.Embed(title=f'Type: {connection["apptag"].capitalize()}')
-        embed.set_author(name='A Jackbox game is starting!')    
-        embed.add_field(name=f'Current Players', value=f'{connection["numPlayers"]}', inline=False)
-        embed.add_field(name=f'Audience Enabled', value=f'{connection["audienceEnabled"]}', inline=False)
-        embed.add_field(name=f'Players in Audience', value=f'{connection["numAudience"]}', inline=False)
-    
-        message = await channel.send(embed=embed)
-        while True:
-            time.sleep(2)
-            url='http://blobcast.jackboxgames.com/room/{0}'.format(code)
-            req = Request(url=url)
-            response = urlopen(req)
-            data = json.loads(response.read())
-            if data.get("error", "") is None:
-                embed = discord.Embed(title='The game has ended!')
-                try:
-                    await jbclient.close()
-                except:
-                    pass
-                return await message.edit(embed=embed)
-            else:
-                if data.get('roomFull', '') is None:
-                    pass
-                else:
-                    embed = discord.Embed(title=f'Type: {data["apptag"].capitalize()}')
-                    embed.set_author(name='A Jackbox game has started!')    
-                    embed.add_field(name=f'Current Players', value=f'{data["numPlayers"]}', inline=False)
-                    embed.add_field(name=f'Audience Enabled', value=f'{data["audienceEnabled"]}', inline=False)
-                    embed.add_field(name=f'Players in Audience', value=f'{data["numAudience"]}', inline=False)
-                    await message.edit(embed=embed)
-                    try:
-                        await jbclient.close()
-                    except:
-                        pass
 def setup(client):
     client.add_cog(Fun(client))
     now = datetime.now()

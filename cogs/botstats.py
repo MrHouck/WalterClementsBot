@@ -7,11 +7,9 @@ import urllib3
 start_time = time.time()
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 
-
 class BotStats(commands.Cog):
     def __init__(self, client):
         self.bot = client
-        
 
     @commands.command()
     async def uptime(self, ctx):
@@ -58,8 +56,6 @@ class BotStats(commands.Cog):
         embed.add_field(name="Total Members", value='{}'.format(totalMembers), inline=False)
         embed.add_field(name="Client Latency", value='{}ms'.format(round(ping*1000)), inline=False)
         await ctx.send(embed=embed)
-
-
         
 def setup(client):
     client.add_cog(BotStats(client))

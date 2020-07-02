@@ -81,7 +81,7 @@ class Misc(commands.Cog):
         Send me a suggestion for this bot! Please note: usernames are recorded, you will be blacklisted if you abuse this feature.
         """
         await ctx.trigger_typing()
-        with open('./config.json', 'r') as f:
+        with open(THIS_FOLDER + '/resources/config.json', 'r') as f:
             stuff = json.load(f)
         if ctx.author.id in stuff["blacklistedUsers"]:
             embed = discord.Embed(description="You have been permanently blacklisted from this command")
@@ -182,30 +182,6 @@ class Misc(commands.Cog):
         buffer.seek(0)
         await ctx.send(f'``Complementary color to #{hexCode} is {rgb}``')
         await ctx.send(file=discord.File(buffer, filename='complementary.png'))
-
-    @commands.command(aliases=['wiki', 'article'], usage="<searchterm>")
-    @commands.guild_only()
-    async def wikipedia(self, ctx, *, searchterm):
-        """
-        Search wikipedia for whatever you want.
-        """
-        searchterm = searchterm.replace('@', '')
-        try:
-            page = wikipedia.page(searchterm, auto_suggest=False)
-            summary = wikipedia.summary(searchterm, sentences=6)
-        except wikipedia.DisambiguationError as e:
-            s = e.options[0]
-            page = wikipedia.page(s, auto_suggest=False)
-            summary = wikipedia.summary(s, sentences=6)
-        summary = summary + '...'
-        url = page.url
-        title = page.title
-        if page.images != None:
-            thumb = random.choice(page.images)
-        embed = discord.Embed(title=f'{title}', url=f'{url}')
-        embed.set_thumbnail(url=f"{thumb}")
-        embed.add_field(name='Summary', value=f"{summary}")
-        await ctx.send(embed=embed)
 
     @commands.command(aliases=['google', 'search'], usage="<query>")
     @commands.guild_only()

@@ -121,8 +121,9 @@ class Mod(commands.Cog):
         Unban someone who was banned.
         """
         await ctx.trigger_typing()
+        banned_users = await ctx.guild.bans()
+
         if member is not discord.Member:
-            banned_users = await ctx.guild.bans()
             member_name, member_discriminator = member.split('#')
         else:
             member_name = member.name
@@ -159,11 +160,17 @@ class Mod(commands.Cog):
         """
         Create a role.
         """
-        original = color
         color = color.strip('#')
-        colorlen = len(color)
-        color = tuple(int(color[i:i+colorlen/3], 16) for i in range(0, colorlen, colorlen/3))
-        color = discord.Color.from_rgb(color)
+        n = len(color) // 3
+        if len(color) == 3:
+            r = int(color[:n] * 2, 16)
+            g = int(color[n:2 * n] * 2, 16)
+            b = int(color[2 * n:3 * n] * 2, 16)
+        else:
+            r = int(color[:n], 16)
+            g = int(color[n:2 * n], 16)
+            b = int(color[2 * n:3 * n], 16)
+        color = discord.Color.from_rgb(r, g, b)
         await ctx.trigger_typing()
         guild = ctx.guild
         await guild.create_role(name=rolename, colour=color, hoist=hoist, mentionable=mentionable, reason=reason)

@@ -234,5 +234,14 @@
             "- Added a `+emoji` command",
             "- Changed the currency emoji/currency name to <:coin:726193607564066888>"
         ]
+    },
+    "9.2":
+    {
+        "date":"7/2/20",
+        "changes":[
+            "- Basically just a bug fix. I went through every command and fixed all the errors found through general usage",
+            "- With that, ``+autorole, +createrole, +suggestion, +tower view [user], +unban, and +walter`` have all been fixed.",
+            "- However, some commands were removed, too. This was partially because I didn't feel like fixing them, but also because they weren't used that often. The commands that have been removed are ``+place, +chatbot, +wikipedia, and +jackbox``. RIP"
+        ]
     }
 }
